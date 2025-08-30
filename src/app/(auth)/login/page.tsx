@@ -1,0 +1,99 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Simulação de login (substitua por sua lógica real)
+    setTimeout(() => {
+      console.log('Login attempt:', { email, password });
+      setIsLoading(false);
+      // Aqui você implementaria a lógica de autenticação
+    }, 1000);
+  };
+
+  return (
+    <div className="transform -translate-y-9 bg-[#191c1f] border border-gray-800 rounded-xl p-8 shadow-2xl">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h1>
+        <p className="text-gray-400">Entre na sua conta para continuar</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full px-4 py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+            placeholder="seu@email.com"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+            Senha
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full px-4 py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              className="w-4 h-4 text-sky-600 bg-[#090A0B] border-gray-700 rounded focus:ring-sky-500 focus:ring-2"
+            />
+            <span className="ml-2 text-sm text-gray-400">Lembrar-me</span>
+          </label>
+          <Link
+            href="/forgot-password"
+            className="text-sm text-sky-400 hover:text-sky-300 transition-colors"
+          >
+            Esqueceu a senha?
+          </Link>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)]"
+        >
+          {isLoading ? 'Entrando...' : 'Entrar'}
+        </button>
+      </form>
+
+      <div className="mt-8 text-center">
+        <p className="text-gray-400">
+          Não tem uma conta?{' '}
+          <Link
+            href="/register"
+            className="text-sky-400 hover:text-sky-300 transition-colors font-medium"
+          >
+            Criar conta
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}

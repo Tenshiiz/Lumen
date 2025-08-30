@@ -1,14 +1,15 @@
 'use client'
-
-import React, { useState } from 'react'
 import Image from 'next/image'
 import RodaDeCores from '../RodaDeCores'
 import InputColors from '../InputColors'
 import { useToast } from '../../../context/ToastContext' // Hook para mostrar notificações globais
+interface PickerColorProps {
+  cor: string;
+  setarCor: (value: string) => void;
+  setValor: React.Dispatch<React.SetStateAction<string>>;
+}
 
-function PickerColor() {
-  // Estado da cor selecionada
-  const [color, setColor] = useState('#FFFFFF')
+function PickerColor({ cor, setarCor, setValor }: PickerColorProps) {
 
   // Hook do contexto do toast para mostrar notificações
   const { showToast } = useToast()
@@ -21,23 +22,19 @@ function PickerColor() {
       </div>
 
       <div className='flex justify-between gap-4'>
-        <RodaDeCores color={color} onChange={setColor} size={280} />
+        <RodaDeCores color={cor} onChange={setarCor} onCommit={setValor} size={280} />
 
         <div className='flex flex-col items-center'>
-          {/* Área da cor selecionada com botão de cópia */}
-          <div className="relative w-75 h-32 rounded-xl group" style={{ backgroundColor: color }}>
-            {/* Botão de cópia que aparece no hover */}
+          <div className="relative w-75 h-32 rounded-xl group" style={{ backgroundColor: cor }}>
             <button
               onClick={() => {
-                // Copia a cor para a área de transferência
-                navigator.clipboard.writeText(color).then(() => {
-                  // Mostra a notificação de sucesso
+                navigator.clipboard.writeText(cor).then(() => {
                   showToast('Cor copiada para a área de transferência!')
                 }).catch(() => {
                   showToast('Erro ao copiar a cor')
                 })
               }}
-              className="
+              className=" cursor-pointer
                 absolute top-2 right-2
                 bg-black/50 hover:bg-black/70
                 text-white rounded-md px-2 py-1
@@ -53,10 +50,10 @@ function PickerColor() {
           </div>
 
           <div className='gap-y-1 gap-x-5 w-78 grid grid-cols-2 grid-rows-2 mt-3'>
-            <InputColors value={color} onChange={setColor} id='hex-input' label="HEX" />
-            <InputColors value={color} onChange={setColor} id='rgb-input' label="RGB" format="rgb" />
-            <InputColors value={color} onChange={setColor} id='hsl-input' label="HSL" format="hsl" />
-            <InputColors value={color} onChange={setColor} id='cmyk-input' label="CMYK" format="cmyk" />
+            <InputColors value={cor} id='hex-input' label="HEX" />
+            <InputColors value={cor} id='rgb-input' label="RGB" format="rgb" />
+            <InputColors value={cor} id='hsl-input' label="HSL" format="hsl" />
+            <InputColors value={cor} id='cmyk-input' label="CMYK" format="cmyk" />
           </div>
         </div>
       </div>

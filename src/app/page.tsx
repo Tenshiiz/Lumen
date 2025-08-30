@@ -6,8 +6,22 @@ import Image from 'next/image';
 import SideLeftbar from './componentes/SideLeftbar';
 import PickerColor from './componentes/PickerColor';
 import SideRightbar from './componentes/SideRightbar';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+
+  const [color, setColor] = useState('#FFFFFF')
+  const [colors, setColors] = useState(Array(8).fill("#191c1f"));
+  const [committedColor, setCommittedColor] = useState('#FFFFFF')
+
+  useEffect(() => {
+    setColors(prev => [committedColor, ...prev.filter(c => c !== committedColor)].slice(0, 8));
+  }, [committedColor]);
+
+  const mudarCor = (novaCor: string) => {
+    setColor(novaCor);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -42,9 +56,9 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className='bg-[#090A0B]/10 backdrop-blur-xs flex gap-4'>
-          <SideLeftbar />
-          <PickerColor />
+        <section id="PickerColor" className='bg-[#090A0B]/10 backdrop-blur-xs flex gap-4'>
+          <SideLeftbar onColorSelect={mudarCor} colors={colors} />
+          <PickerColor cor={color} setarCor={setColor} setValor={setCommittedColor} />
           <SideRightbar />
         </section>
       </main>

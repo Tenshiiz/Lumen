@@ -18,7 +18,9 @@
     --foreground: #ededed;
   }
 }
-
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: var(--font-inter); /* Aplica a fonte Inter definida em layout.tsx */
   padding: 0px 0px;

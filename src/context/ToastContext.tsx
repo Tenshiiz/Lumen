@@ -1,17 +1,3 @@
-/**
- * CONTEXTO PARA GERENCIAMENTO DE NOTIFICAÇÕES TOAST
- *
- * Este arquivo implementa um sistema de notificações globais usando o Context API do React.
- * Permite que qualquer componente da aplicação exiba notificações temporárias (toasts)
- * sem precisar passar props através de vários níveis da árvore de componentes.
- *
- * FUNCIONAMENTO:
- * 1. O ToastProvider envolve toda a aplicação no layout.tsx
- * 2. Qualquer componente pode usar o hook useToast() para mostrar notificações
- * 3. O ToastNotification é renderizado no nível mais alto, fora de qualquer contêiner
- *    que possa interferir no seu posicionamento fixo
- */
-
 'use client'
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
