@@ -75,7 +75,7 @@ function Header() {
         className='relative cursor-pointer flex justify-center ml-15 p-5 items-center rounded-3xl backdrop-blur-sm hover:bg-white/10 transition-colors'
       >
         <div className={`absolute transition-opacity duration-300 ${isDarkMode ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <BsMoon size={18} className="text-white"/>
+          <BsMoon size={18} className="text-indigo-100"/>
         </div>
         <div className={`absolute transition-opacity duration-300 ${isDarkMode ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <BsSun size={18} className="text-yellow-400"/>

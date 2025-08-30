@@ -4,12 +4,10 @@ import Header from './componentes/Header';
 import Glow from './componentes/Glow';
 import Image from 'next/image';
 import SideLeftbar from './componentes/SideLeftbar';
-import { useState } from 'react';
 import PickerColor from './componentes/PickerColor';
+import SideRightbar from './componentes/SideRightbar';
 
 export default function Home() {
-  // Estado para controlar a cor selecionada na roda
-  const [selectedColor, setSelectedColor] = useState('#FF6B6B');
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -47,6 +45,7 @@ export default function Home() {
         <section className='bg-[#090A0B]/10 backdrop-blur-xs flex gap-4'>
           <SideLeftbar />
           <PickerColor />
+          <SideRightbar />
         </section>
       </main>
     </div>

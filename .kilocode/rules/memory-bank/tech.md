@@ -14,8 +14,7 @@
 
 ## Dependências Principais (Frontend)
 
-*   **`@uiw/react-color-wheel`:** Componente de roda de cores para seleção interativa.
-*   **`react-colorful`:** Outro componente de seletor de cores, leve e personalizável.
+*   **`react-colorful`:** Componente de seletor de cores, leve e personalizável.
 *   **`react-icons`:** Biblioteca para inclusão de ícones (ex: `BsMoon`, `BsSun` para o seletor de tema).
 
 ## Ferramentas de Desenvolvimento e Build
@@ -28,4 +27,4 @@
 
 *   **TypeScript:** Configurado com caminhos de alias (`@/*` aponta para `./src/*`).
 *   **Next.js:** Configuração básica com Turbopack habilitado.
-*   **Tailwind CSS:** Configurado para escanear arquivos em `pages`, `components`, `app` e `src`.
+*   **Tailwind CSS:** Arquivo `tailwind.config.ts` mantido por compatibilidade (Tailwind v4 não precisa mais, mas mantido para configurações customizadas), configurado para escanear arquivos em `pages`, `components`, `app` e `src`.

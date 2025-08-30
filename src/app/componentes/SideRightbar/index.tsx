@@ -1,4 +1,4 @@
-function SideLeftbar() {
+function SideRightbar() {
     const colors = [
         '#ef4444', // red-500
         '#ec4899', // pink-500  
@@ -26,7 +26,7 @@ function SideLeftbar() {
     ];
 
     return (
-   <aside className="px-10 w-75 border border-gray-800 rounded-xl ml-2.5">
+   <aside className="px-10 w-75 border border-gray-800 rounded-xl">
   <div>
     <h2 className="mb-1 text-gray-400 font-semibold py-2">CORES RECENTES</h2>
     <ul className="grid grid-cols-4 gap-2 mb-4">
@@ -66,4 +66,4 @@ function SideLeftbar() {
     );
 }
 
-export default SideLeftbar;
+export default SideRightbar;

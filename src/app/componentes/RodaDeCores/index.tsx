@@ -110,7 +110,7 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
           const angle = Math.atan2(dy, dx);
           const hue = ((angle * 180 / Math.PI) + 360) % 360;
           const saturation = distance / radius;
-          const lightness = 0.5;
+          const lightness = 0.5 + (1 - saturation) * 0.3;
 
           const [r, g, b] = hslToRgb(hue, saturation, lightness);
 
@@ -198,7 +198,8 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
     const saturation = Math.min(distance / radius, 1);
 
     // Converte para RGB e depois para Hex
-    const [r, g, b] = hslToRgb(hue, saturation, 0.5);
+    const lightness = 0.5 + (1 - saturation) * 0.3;
+    const [r, g, b] = hslToRgb(hue, saturation, lightness);
     return rgbToHex(r, g, b);
   }, [size, color, hslToRgb, rgbToHex]);
 
@@ -438,7 +439,7 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
   }, [isDragging, handleGlobalMouseMove, handleMouseUp]);
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" style={{ width: size + 'px', height: size + 'px' }}>
       {/* Canvas do fundo (pré-renderizado) */}
       <canvas
         ref={backgroundCanvasRef}
