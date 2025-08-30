@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useToast } from '../../../context/ToastContext' // Hook para mostrar notificações globais
 
 interface InputColorsProps {
   value: string
@@ -54,9 +55,10 @@ function rgbToCmyk({ r, g, b }: { r: number, g: number, b: number }) {
   }
 }
 
-function InputColors({ value, label = 'Nome', width = 'w-full', format = 'hex', id, onClickButton }: InputColorsProps) {
-
+function InputColors({ value, label = 'Nome', width = 'w-full', format = 'hex', id }: InputColorsProps) {
   const [displayValue, setDisplayValue] = useState('')
+
+  const { showToast } = useToast()
 
   useEffect(() => {
     if (!value) return
@@ -71,37 +73,23 @@ function InputColors({ value, label = 'Nome', width = 'w-full', format = 'hex', 
     } else setDisplayValue(value.toUpperCase())
   }, [value, format])
 
-
   const handleCopy = () => {
-    navigator.clipboard.writeText(displayValue).then(() => {
-      console.log(`Copiado: ${displayValue}`)
-      if (onClickButton) onClickButton()
-    })
+    navigator.clipboard.writeText(displayValue)
+      .then(() => showToast('Cor copiada para a área de transferência!'))
+      .catch(() => showToast('Erro ao copiar a cor'))
   }
 
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className="text-sm font-medium text-gray-400">{label}</label>
-      {format === 'hex' ? (
-        <input
-          type="text"
-          id={id}
-          value={displayValue}
-          readOnly
-          onClick={handleCopy}
-          maxLength={6}
-          className={`border border-gray-700 rounded-md p-2 ${width} bg-[#191c1f] text-sm text-center text-white font-mono cursor-pointer`}
-          placeholder="000000"
-        />
-      ) : (
-        <input
-          type="text"
-          readOnly
-          value={displayValue}
-          onClick={handleCopy}
-          className={`border border-gray-700 rounded-md p-2 ${width} bg-[#191c1f] text-sm text-center text-white font-mono cursor-pointer`}
-        />
-      )}
+      <input
+        type="text"
+        id={id}
+        value={displayValue}
+        readOnly
+        onClick={handleCopy}
+        className={`border border-gray-700 rounded-md p-2 ${width} bg-[#191c1f] text-sm text-center text-white font-mono cursor-pointer`}
+      />
     </div>
   )
 }
