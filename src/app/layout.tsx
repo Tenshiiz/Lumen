@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from "next/font/google"; // Importa a fonte Inter
 import "./globals.css";
+import { ToastProvider } from "../context/ToastContext"; // Importa o provedor do contexto do toast
+import ToastNotification from "./componentes/ToastNotification"; // Importa o componente de notificação
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +37,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`} // Adiciona a variável da fonte Inter
       >
-        {children}
+        {/* ToastProvider envolve toda a aplicação para fornecer o contexto do toast */}
+        <ToastProvider>
+          {children}
+          {/* ToastNotification é renderizado aqui, no nível mais alto da aplicação,
+              fora de qualquer contêiner que possa interferir no seu posicionamento fixo */}
+          <ToastNotification />
+        </ToastProvider>
       </body>
     </html>
   );

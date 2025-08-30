@@ -11,3 +11,5 @@
     *   Desenvolver sistema de persistência de dados (localStorage ou backend).
     *   Adicionar validação de acessibilidade de cores (contraste WCAG).
     *   Implementar exportação de paletas em diferentes formatos.
+
+*   **Nota sobre Git Push:** Quando solicitado para comitar alterações, sempre perguntar se pode executar `git push` para enviar as alterações ao repositório remoto.
