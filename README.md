@@ -1,5 +1,8 @@
+<div align="center">
+
 # Lumen: Ferramentas de Cores para a Web
 
+</div>
 <p align="center">
   <img src="./public/logoSemNome.svg" alt="Lumen Logo" width="140">
 </p>
