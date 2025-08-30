@@ -57,7 +57,7 @@ O coração do Lumen é uma **roda de cores de alta performance**, construída d
     ```bash
     npm run dev
     ```
-    A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
+    A aplicação estará disponível em [https://lumen-ashy.vercel.app](http://localhost:3000).
 
 ## 🛠️ Stack de Tecnologia
 
