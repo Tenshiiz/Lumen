@@ -30,11 +30,12 @@
 
 ## ✨ Funcionalidades
 
-- **🎨 Roda de Cores Interativa**: Componente customizado usando Canvas com arraste global e precisão matemática
-- **🔄 Conversão de Formatos**: Suporte completo a HEX, RGB, HSL e CMYK
-- **📱 Interface Responsiva**: Layout moderno com sidebars para cores recentes e paletas salvas
-- **🌙 Tema Claro/Escuro**: Alternância de temas com persistência
-- **⚡ Alta Performance**: Roda 100% no navegador sem dependências pesadas
+- **🎨 Roda de Cores Interativa**: Componente customizado usando Canvas com arraste global e precisão matemática.
+- **🔄 Conversão de Formatos**: Suporte completo a HEX, RGB, HSL e CMYK.
+- **📱 Interface Responsiva**: Layout moderno com sidebars para cores recentes e paletas salvas.
+- **🌙 Tema Claro/Escuro**: Alternância de temas com persistência.
+- **⚡ Alta Performance**: Roda 100% no navegador sem dependências pesadas.
+- **🔗 Sincronização de Componentes**: A seleção de cores (seja na roda, nas sidebars ou por input direto) atualiza instantaneamente todos os componentes relevantes da interface, garantindo uma experiência de usuário coesa.
 
 ## ✨ Destaques Técnicos
 
@@ -42,7 +43,8 @@ O coração do Lumen é uma **roda de cores de alta performance**, construída d
 
 - **Canvas Otimizado em Camadas**: Fundo estático e ponteiro em canvas sobreposto, garantindo redesenho mínimo e experiência **sem lag**.
 - **Arraste Global**: O ponteiro pode ser arrastado fora dos limites do componente, como em softwares profissionais de design.
-- **Precisão Matemática**: Conversão de coordenadas (x, y) para HSL usando cálculos diretos, evitando o uso de APIs pesadas como `getImageData`, que podem ser lentas no processamento..
+- **Precisão Matemática**: Conversão de coordenadas (x, y) para HSL usando cálculos diretos, evitando o uso de APIs pesadas como `getImageData`.
+- **Arquitetura de Estado Centralizada**: Utiliza o padrão *state lifting* do React, onde o estado de cor global é gerenciado por um componente pai (`Home`) e distribuído para os filhos (`PickerColor`, `SideLeftbar`), garantindo uma única fonte da verdade e sincronização consistente através de props e callbacks.
 
 ## 🚀 Como Executar o Projeto
 
@@ -61,30 +63,29 @@ O coração do Lumen é uma **roda de cores de alta performance**, construída d
     ```bash
     npm run dev
     ```
-    A aplicação estará disponível em [https://lumen-ashy.vercel.app](https://lumen-ashy.vercel.app).
+    A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
 
 ## 🛠️ Stack de Tecnologia
 
 - **Framework**: [Next.js 15.5.0](https://nextjs.org/)
 - **Linguagem**: [TypeScript 5.x](https://www.typescriptlang.org/)
 - **UI Library**: [React 19.1.0](https://reactjs.org/)
-- **Estilização**: [TailwindCSS 4.x](https://tailwindcss.com/) (arquivo config mantido por compatibilidade)
+- **Estilização**: [TailwindCSS 4.x](https://tailwindcss.com/)
 - **Ícones**: [React Icons](https://react-icons.github.io/react-icons/)
-- **Componentes de Cor**: [React Colorful](https://github.com/omgovich/react-colorful)
 - **Renderização Gráfica**: HTML5 Canvas API
 
 ## 🚧 Próximos Passos
 
-- [ ] **Funcionalidade Dinâmica nas Sidebars**: Implementar salvamento e carregamento de cores/paletas
-- [ ] **Sistema de Persistência**: Adicionar localStorage ou integração com backend
-- [ ] **Validação de Acessibilidade**: Implementar análise de contraste WCAG
-- [ ] **Exportação de Paletas**: Suporte para exportar paletas em diferentes formatos
-- [ ] **Ferramentas Avançadas**: Adicionar criação de gradientes e padrões
+- [ ] **Funcionalidade Dinâmica nas Sidebars**: Implementar salvamento e carregamento de cores/paletas.
+- [ ] **Sistema de Persistência**: Adicionar `localStorage` ou integração com backend.
+- [ ] **Validação de Acessibilidade**: Implementar análise de contraste WCAG.
+- [ ] **Exportação de Paletas**: Suporte para exportar paletas em diferentes formatos.
+- [ ] **Ferramentas Avançadas**: Adicionar criação de gradientes e padrões.
 
 ## ⚖️ Licença
 
 Este projeto está licenciado sob a **MIT License**.
-Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.
+Veja o arquivo `LICENSE` para mais detalhes.
 
 ---
 

@@ -5,7 +5,6 @@ import { useToast } from '../../../context/ToastContext' // Hook para mostrar no
 
 interface InputColorsProps {
   value: string
-  onChange: (value: string) => void
   label?: string
   width?: string
   format?: 'hex' | 'rgb' | 'hsl' | 'cmyk'
@@ -88,7 +87,7 @@ function InputColors({ value, label = 'Nome', width = 'w-full', format = 'hex', 
         value={displayValue}
         readOnly
         onClick={handleCopy}
-        className={`border border-gray-700 rounded-md p-2 ${width} bg-[#191c1f] text-sm text-center text-white font-mono cursor-pointer`}
+        className={`transform transition-transform duration-200 hover:scale-105 active:scale-95 border border-gray-700 rounded-md p-2 ${width} bg-[#191c1f] text-sm text-center text-white font-mono cursor-pointer`}
       />
     </div>
   )

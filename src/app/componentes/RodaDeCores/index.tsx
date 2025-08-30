@@ -18,13 +18,17 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 interface RodaDeCoresProps {
   color: string;
   onChange: (color: string) => void;
+  onCommit?: (color: string) => void;
   size?: number;
 }
 
-function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
+function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps) {
   // Referências para os elementos canvas (fundo e ponteiro)
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
   const pointerCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Referência para armazenar a cor atual durante o arrasto
+  const currentColorRef = useRef(color);
 
   // Estado para controlar se o usuário está arrastando
   const [isDragging, setIsDragging] = useState(false);
@@ -320,6 +324,7 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
     const clampedPosition = clampPositionToWheel(x, y);
 
     const newColor = positionToColor(clampedPosition.x, clampedPosition.y);
+    currentColorRef.current = newColor;
     onChange(newColor);
     setPointerPosition(clampedPosition);
   }, [clampPositionToWheel, positionToColor, onChange]);
@@ -339,6 +344,7 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
     const clampedPosition = clampPositionToWheel(x, y);
 
     const newColor = positionToColor(clampedPosition.x, clampedPosition.y);
+    currentColorRef.current = newColor;
     onChange(newColor);
     setPointerPosition(clampedPosition);
   }, [isDragging, clampPositionToWheel, positionToColor, onChange]);
@@ -358,6 +364,7 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
     const clampedPosition = clampPositionToWheel(x, y);
 
     const newColor = positionToColor(clampedPosition.x, clampedPosition.y);
+    currentColorRef.current = newColor;
     onChange(newColor);
     setPointerPosition(clampedPosition);
   }, [isDragging, clampPositionToWheel, positionToColor, onChange]);
@@ -365,7 +372,10 @@ function RodaDeCores({ color, onChange, size = 200 }: RodaDeCoresProps) {
   // Handler para soltar o mouse (para o dragging)
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  }, []);
+    if (onCommit) {
+      onCommit(currentColorRef.current);
+    }
+  }, [onCommit]);
 
   // Handler para quando o mouse sai do canvas (mas continua dragging)
   const handleMouseLeave = useCallback(() => {
