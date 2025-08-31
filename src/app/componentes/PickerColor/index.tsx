@@ -1,4 +1,6 @@
 'use client'
+
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import RodaDeCores from '../RodaDeCores'
 import InputColors from '../InputColors'
