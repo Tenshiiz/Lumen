@@ -1,4 +1,9 @@
 'use client'
+<<<<<<< HEAD
+=======
+
+import React, { useEffect, useState } from 'react'
+>>>>>>> 6e5cdabad9d1d6b49abf0ebe207101a21e42c1fd
 import Image from 'next/image'
 import RodaDeCores from '../RodaDeCores'
 import InputColors from '../InputColors'

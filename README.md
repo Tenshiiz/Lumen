@@ -37,15 +37,16 @@
 - **📱 Interface Responsiva**: Layout moderno com sidebars para cores recentes e paletas salvas.
 - **🌙 Tema Claro/Escuro**: Alternância de temas com persistência.
 - **⚡ Alta Performance**: Roda 100% no navegador sem dependências pesadas.
-- **🔗 Sincronização de Componentes**: A seleção de cores atualiza instantaneamente todos os componentes relevantes da interface.
+- **🔗 Sincronização de Componentes**: A seleção de cores (seja na roda, nas sidebars ou por input direto) atualiza instantaneamente todos os componentes relevantes da interface, garantindo uma experiência de usuário coesa.
 
 ## ✨ Destaques Técnicos
 
 O coração do Lumen é uma **roda de cores de alta performance**, construída do zero para superar as limitações de bibliotecas tradicionais:
 
 - **Canvas Otimizado em Camadas**: Fundo estático e ponteiro em canvas sobreposto, garantindo redesenho mínimo e experiência **sem lag**.
-- **Arraste Global**: O ponteiro pode ser arrastado fora dos limites do componente.
-- **Arquitetura de Estado Centralizada**: Utiliza o padrão *state lifting* do React, onde o estado de cor global é gerenciado por um componente pai (`Home`).
+- **Arraste Global**: O ponteiro pode ser arrastado fora dos limites do componente, como em softwares profissionais de design.
+- **Precisão Matemática**: Conversão de coordenadas (x, y) para HSL usando cálculos diretos, evitando o uso de APIs pesadas como `getImageData`.
+- **Arquitetura de Estado Centralizada**: Utiliza o padrão *state lifting* do React, onde o estado de cor global é gerenciado por um componente pai (`Home`) e distribuído para os filhos (`PickerColor`, `SideLeftbar`), garantindo uma única fonte da verdade e sincronização consistente.
 - **Route Groups para Performance**: As rotas de autenticação (`/login`, `/register`) usam um layout minimalista para um carregamento mais rápido, sem carregar componentes desnecessários da aplicação principal.
 
 ## 🚀 Como Executar o Projeto
@@ -83,6 +84,7 @@ O coração do Lumen é uma **roda de cores de alta performance**, construída d
 - [ ] **Sistema de Persistência**: Adicionar `localStorage` ou integração com backend.
 - [ ] **Validação de Acessibilidade**: Implementar análise de contraste WCAG.
 - [ ] **Exportação de Paletas**: Suporte para exportar paletas em diferentes formatos.
+- [ ] **Ferramentas Avançadas**: Adicionar criação de gradientes e padrões.
 
 ## ⚖️ Licença
 
