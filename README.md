@@ -28,6 +28,12 @@
   [INSERIR GIF DA RODA DE CORES EM AÇÃO]
 </p>
 
+<p align="center">
+  <a href="https://lumen-ashy.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/🌐_Acesse_a_Aplicação-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Acesse a Aplicação">
+  </a>
+</p>
+
 ## ✨ Funcionalidades
 
 - **🎨 Roda de Cores Interativa**: Componente customizado usando Canvas com arraste global e precisão matemática.
@@ -48,25 +54,6 @@ O coração do Lumen é uma **roda de cores de alta performance**, construída d
 - **Precisão Matemática**: Conversão de coordenadas (x, y) para HSL usando cálculos diretos, evitando o uso de APIs pesadas como `getImageData`.
 - **Arquitetura de Estado Centralizada**: Utiliza o padrão *state lifting* do React, onde o estado de cor global é gerenciado por um componente pai (`Home`) e distribuído para os filhos (`PickerColor`, `SideLeftbar`), garantindo uma única fonte da verdade e sincronização consistente.
 - **Route Groups para Performance**: As rotas de autenticação (`/login`, `/register`) usam um layout minimalista para um carregamento mais rápido, sem carregar componentes desnecessários da aplicação principal.
-
-## 🚀 Como Executar o Projeto
-
-1. **Clone o repositório:**
-    ```bash
-    git clone https://github.com/seu-usuario/lumen.git
-    cd lumen
-    ```
-
-2. **Instale as dependências:**
-    ```bash
-    npm install
-    ```
-
-3. **Execute o servidor de desenvolvimento:**
-    ```bash
-    npm run dev
-    ```
-    A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
 
 ## 🛠️ Stack de Tecnologia
 

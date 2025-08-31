@@ -56,14 +56,12 @@ export default function Home() {
             </div>
           </div>
         </section>
-<<<<<<< HEAD
         <section id="PickerColor" className='bg-[#090A0B]/10 backdrop-blur-xs flex gap-4'>
-=======
-        <section className='bg-[#090A0B]/10 backdrop-blur-xs flex gap-4'>
->>>>>>> 6e5cdabad9d1d6b49abf0ebe207101a21e42c1fd
-          <SideLeftbar onColorSelect={mudarCor} colors={colors} />
-          <PickerColor cor={color} setarCor={setColor} setValor={setCommittedColor} />
-          <SideRightbar />
+          <section className='bg-[#090A0B]/10 backdrop-blur-xs flex gap-4'>
+            <SideLeftbar onColorSelect={mudarCor} colors={colors} />
+            <PickerColor cor={color} setarCor={setColor} setValor={setCommittedColor} />
+            <SideRightbar />
+          </section>
         </section>
       </main>
     </div>

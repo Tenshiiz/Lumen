@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import supabase from "@/lib/supabase"
+
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -23,17 +25,37 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de registro (substitua por sua lógica real)
-    setTimeout(() => {
-      console.log('Register attempt:', formData);
+    // Validar se senhas são iguais
+    if (formData.password !== formData.confirmPassword) {
+      alert('Senhas não coincidem!');
       setIsLoading(false);
-      // Aqui você implementaria a lógica de registro
-    }, 1000);
+      return;
+    }
+
+    // Chamar Supabase para registrar
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          name: formData.name  // Salva o nome nos metadados
+        }
+      }
+    });
+
+    if (error) {
+      alert('Erro: ' + error.message);
+    } else {
+      alert('Usuário criado! Verifique seu email.');
+      // Limpar formulário ou redirecionar
+    }
+
+    setIsLoading(false);
   };
 
   return (
     <div className="transform -translate-y-10 bg-[#191c1f] border border-gray-800 rounded-xl p-8 shadow-2xl">
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 ">
         <h1 className="text-3xl font-bold text-white mb-2">Criar conta</h1>
         <p className="text-gray-400">Junte-se ao Lumen e explore cores incríveis</p>
       </div>
@@ -125,7 +147,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)]"
+          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] cursor-pointer transform active:scale-98"
         >
           {isLoading ? 'Criando conta...' : 'Criar conta'}
         </button>
