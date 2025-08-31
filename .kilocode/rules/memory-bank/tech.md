@@ -6,6 +6,12 @@
 *   **Framework Web:** Next.js (utilizando o App Router)
 *   **Biblioteca de UI:** React
 
+## Autenticação e Banco de Dados
+
+*   **Backend as a Service (BaaS):** [Supabase](https://supabase.com/)
+    *   **Autenticação:** Gerenciamento de usuários, incluindo registro e login.
+    *   **Banco de Dados:** PostgreSQL para armazenamento de dados (ainda a ser implementado).
+
 ## Estilização
 
 *   **Framework CSS:** Tailwind CSS (v4)
@@ -16,6 +22,7 @@
 
 *   **`next`**: Framework principal da aplicação.
 *   **`react`**: Biblioteca para construção da interface.
+*   **`@supabase/supabase-js`**: Cliente JavaScript para interagir com a API do Supabase.
 *   **`react-colorful`**: Dependência listada, mas o seletor de cores principal (`RodaDeCores`) é uma implementação customizada com Canvas.
 *   **`react-icons`**: Biblioteca para inclusão de ícones (ex: `BsMoon`, `BsSun` para o seletor de tema).
 
@@ -31,3 +38,4 @@
 *   **TypeScript:** Configurado com caminhos de alias (`@/*` aponta para `./src/*`).
 *   **Next.js:** Configuração para habilitar Turbopack e processamento de SVGs.
 *   **Tailwind CSS:** Configurado para escanear arquivos no diretório `src/`.
+*   **Variáveis de Ambiente:** Utilização de `.env` e `.env.local` para gerenciamento de credenciais do Supabase.
