@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { FiLoader } from 'react-icons/fi';
 import supabase from "@/lib/supabase"
+import Modal from '../../componentes/Modal';
 
 
 export default function RegisterPage() {
@@ -13,6 +15,13 @@ export default function RegisterPage() {
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info' as 'success' | 'error' | 'info'
+  });
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -27,7 +36,12 @@ export default function RegisterPage() {
 
     // Validar se senhas são iguais
     if (formData.password !== formData.confirmPassword) {
-      alert('Senhas não coincidem!');
+      setModal({
+        isOpen: true,
+        title: 'Erro',
+        message: 'As senhas não coincidem. Verifique e tente novamente.',
+        type: 'error'
+      });
       setIsLoading(false);
       return;
     }
@@ -39,15 +53,43 @@ export default function RegisterPage() {
       options: {
         data: {
           name: formData.name  // Salva o nome nos metadados
-        }
+        },
+        emailRedirectTo: undefined  // Desabilita redirecionamento de e-mail
       }
     });
 
     if (error) {
-      alert('Erro: ' + error.message);
+      // Verificar se é erro de e-mail já existente
+      if (error.message.includes('User already registered') || error.message.includes('already been registered')) {
+        setModal({
+          isOpen: true,
+          title: 'E-mail já cadastrado',
+          message: `O e-mail ${formData.email} já está cadastrado no sistema.`,
+          type: 'error'
+        });
+      } else {
+        setModal({
+          isOpen: true,
+          title: 'Erro ao criar conta',
+          message: error.message,
+          type: 'error'
+        });
+      }
     } else {
-      alert('Usuário criado! Verifique seu email.');
-      // Limpar formulário ou redirecionar
+      setModal({
+        isOpen: true,
+        title: 'Conta criada',
+        message: 'Sua conta foi criada com sucesso! Você já pode fazer login.',
+        type: 'success'
+      });
+
+      // Limpar formulário
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      });
     }
 
     setIsLoading(false);
@@ -147,8 +189,9 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] cursor-pointer transform active:scale-98"
+          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] cursor-pointer transform active:scale-98 flex items-center justify-center gap-2"
         >
+          {isLoading && <FiLoader className="animate-spin" size={18} />}
           {isLoading ? 'Criando conta...' : 'Criar conta'}
         </button>
       </form>
@@ -164,6 +207,32 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
+
+      {/* Modal de Feedback */}
+      <Modal
+        isOpen={modal.isOpen}
+        onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+      >
+        {modal.type === 'error' && modal.title === 'E-mail já cadastrado' && (
+          <div className="flex gap-3 mt-4">
+            <Link
+              href="/login"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              Fazer Login
+            </Link>
+            <Link
+              href="/forgot-password"
+              className="text-blue-400 flex items-center hover:text-blue-300 text-sm underline"
+            >
+              Esqueceu a senha?
+            </Link>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

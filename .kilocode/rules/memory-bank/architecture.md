@@ -23,6 +23,10 @@ O projeto Lumen é uma aplicação web construída com Next.js e segue a estrutu
         *   **`SideLeftbar/`**: Barra lateral esquerda com lista de cores recentes e paletas salvas, que pode atualizar a cor global.
         *   **`SideRightbar/`**: Barra lateral direita com lista de cores recentes e paletas salvas.
         *   **`Glow/`**: Componente para efeitos visuais de brilho.
+        *   **`Modal/`**: Componente genérico para modais com tipos (success, error, info) e animações.
+        *   **`ToastNotification/`**: Componente de notificação temporária que usa o Context API.
+    *   **`context/`**: Diretório para contextos globais da aplicação.
+        *   **`ToastContext.tsx`**: Contexto global para gerenciamento de notificações toast.
 
 ## Componentes Principais e Gerenciamento de Estado
 
@@ -34,6 +38,9 @@ O projeto Lumen é uma aplicação web construída com Next.js e segue a estrutu
 *   **`SideLeftbar` ([`src/app/componentes/SideLeftbar/index.tsx`](src/app/componentes/SideLeftbar/index.tsx:6))**: Barra lateral que, ao ter uma de suas cores clicada, chama a função `onColorSelect` para atualizar o estado de cor global na `Home`.
 *   **`InputColors` ([`src/app/componentes/InputColors/index.tsx`](src/app/componentes/InputColors/index.tsx:57))**: Componente `client-side` que exibe os valores da cor. Ele lê o valor do estado `committedColor` do `PickerColor`, garantindo que só seja atualizado quando a cor é confirmada.
 *   **`AuthLayout` ([`src/app/(auth)/layout.tsx`](src/app/(auth)/layout.tsx:4))**: Layout minimalista para as rotas de autenticação, garantindo performance ao não carregar componentes desnecessários.
+*   **`ToastProvider` ([`src/context/ToastContext.tsx`](src/context/ToastContext.tsx:37))**: Provedor de contexto global que gerencia o estado das notificações toast em toda a aplicação.
+*   **`ToastNotification` ([`src/app/componentes/ToastNotification/index.tsx`](src/app/componentes/ToastNotification/index.tsx:13))**: Componente de notificação temporária que aparece automaticamente e desaparece após 3 segundos.
+*   **`Modal` ([`src/app/componentes/Modal/index.tsx`](src/app/componentes/Modal/index.tsx:15))**: Componente genérico para exibir modais com diferentes tipos (success, error, info) e animações suaves.
 
 ## Decisões Técnicas Chave
 
@@ -41,3 +48,4 @@ O projeto Lumen é uma aplicação web construída com Next.js e segue a estrutu
 *   **Sincronização com `useEffect`:** Um `useEffect` em `PickerColor` foi adicionado para sincronizar o estado `committedColor` com a prop `cor` vinda da `Home`. Isso garante que seleções de cor externas (como da `SideLeftbar`) se reflitam corretamente nos `InputColors`.
 *   **Separação de Eventos de Cor:** A `RodaDeCores` agora distingue entre uma mudança de cor em tempo real (`onChange`) e uma confirmação de cor (`onCommit`), permitindo um controle mais granular da experiência do usuário.
 *   **Route Groups para Performance**: A pasta `(auth)` é usada para aplicar um layout específico e mais leve às páginas de login/registro, evitando o carregamento do `Header` completo e das sidebars.
+*   **Sistema de Notificações Global**: Utiliza Context API para gerenciamento de notificações toast, permitindo que qualquer componente da aplicação mostre mensagens temporárias sem precisar passar props através de vários níveis da árvore de componentes.

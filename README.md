@@ -44,6 +44,8 @@
 - **🌙 Tema Claro/Escuro**: Alternância de temas com persistência.
 - **⚡ Alta Performance**: Roda 100% no navegador sem dependências pesadas.
 - **🔗 Sincronização de Componentes**: A seleção de cores (seja na roda, nas sidebars ou por input direto) atualiza instantaneamente todos os componentes relevantes da interface, garantindo uma experiência de usuário coesa.
+- **🔔 Sistema de Notificações**: Notificações toast globais com Context API para feedback imediato ao usuário.
+- **📋 Modais Interativos**: Modais genéricos com animações suaves e tipos (success, error, info) para confirmações e alertas.
 
 ## ✨ Destaques Técnicos
 
@@ -63,15 +65,15 @@ O coração do Lumen é uma **roda de cores de alta performance**, construída d
 - **Estilização**: [TailwindCSS 4.x](https://tailwindcss.com/)
 - **Ícones**: [React Icons](https://react-icons.github.io/react-icons/)
 - **Renderização Gráfica**: HTML5 Canvas API
+- **Backend as a Service**: [Supabase](https://supabase.com/) (Autenticação e Banco de Dados)
 
 ## 🚧 Próximos Passos
 
-- [ ] **Lógica de Autenticação**: Implementar a funcionalidade real de login/registro.
-- [ ] **Funcionalidade Dinâmica nas Sidebars**: Implementar salvamento e carregamento de cores/paletas.
-- [ ] **Sistema de Persistência**: Adicionar `localStorage` ou integração com backend.
-- [ ] **Validação de Acessibilidade**: Implementar análise de contraste WCAG.
-- [ ] **Exportação de Paletas**: Suporte para exportar paletas em diferentes formatos.
-- [ ] **Ferramentas Avançadas**: Adicionar criação de gradientes e padrões.
+- [ ] **Lógica de Autenticação**: Implementar a lógica de autenticação real nas páginas de login e registro usando o cliente Supabase.
+- [ ] **Funcionalidade Dinâmica nas Sidebars**: Implementar funcionalidade de salvamento de cores e paletas na `SideLeftbar` e `SideRightbar`.
+- [ ] **Sistema de Persistência**: Desenvolver um sistema de persistência de dados (ex: `localStorage` ou banco de dados).
+- [ ] **Validação de Acessibilidade**: Adicionar validação de acessibilidade de cores (contraste WCAG).
+- [ ] **Exportação de Paletas**: Implementar a funcionalidade de exportação de paletas em diferentes formatos (CSS, JSON, etc.).
 
 ## ⚖️ Licença
 
