@@ -114,8 +114,8 @@ function Header() {
         md:bg-gradient-to-r md:from-transparent md:via-gray-800/10 md:to-transparent
         md:border-gray-600/30 md:shadow-lg md:backdrop-blur-none md:px-4 md:rounded-xl
         ${isMobileNavOpen
-          ? 'transition-all duration-500 ease-out opacity-100 scale-100'
-          : 'transition-all duration-400 ease-in opacity-0 scale-95 md:opacity-100 md:scale-100'
+          ? 'transition-all duration-500 ease-out opacity-100 scale-100 pointer-events-auto'
+          : 'transition-all duration-400 ease-in opacity-0 scale-95 pointer-events-none md:opacity-100 md:scale-100 md:pointer-events-auto'
         }
       `}>
         <ul className='text-center flex-col flex md:flex-row justify-center items-center gap-6 md:gap-8'>

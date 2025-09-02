@@ -96,13 +96,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="transform -translate-y-10 bg-[#191c1f] border border-gray-800 rounded-xl p-8 shadow-2xl">
-      <div className="text-center mb-8 ">
-        <h1 className="text-3xl font-bold text-white mb-2">Criar conta</h1>
-        <p className="text-gray-400">Junte-se ao Lumen e explore cores incríveis</p>
+    <div className="transform -translate-y-6 sm:-translate-y-10 bg-[#191c1f] border border-gray-800 rounded-xl p-4 sm:p-6 md:p-8 shadow-2xl">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Criar conta</h1>
+        <p className="text-gray-400 text-sm sm:text-base">Junte-se ao Lumen e explore cores incríveis</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
             Nome completo
@@ -114,7 +114,7 @@ export default function RegisterPage() {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors text-sm sm:text-base"
             placeholder="Seu nome completo"
           />
         </div>
@@ -130,7 +130,7 @@ export default function RegisterPage() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors text-sm sm:text-base"
             placeholder="seu@email.com"
           />
         </div>
@@ -146,7 +146,7 @@ export default function RegisterPage() {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors text-sm sm:text-base"
             placeholder="••••••••"
           />
         </div>
@@ -162,19 +162,19 @@ export default function RegisterPage() {
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-[#090A0B] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors text-sm sm:text-base"
             placeholder="••••••••"
           />
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-start sm:items-center">
           <input
             type="checkbox"
             id="terms"
             required
-            className="w-4 h-4 text-sky-600 bg-[#090A0B] border-gray-700 rounded focus:ring-sky-500 focus:ring-2"
+            className="w-4 h-4 text-sky-600 bg-[#090A0B] border-gray-700 rounded focus:ring-sky-500 focus:ring-2 mt-0.5 sm:mt-0"
           />
-          <label htmlFor="terms" className="ml-2 text-sm text-gray-400">
+          <label htmlFor="terms" className="ml-2 text-xs sm:text-sm text-gray-400 leading-relaxed">
             Concordo com os{' '}
             <Link href="/terms" className="text-sky-400 hover:text-sky-300 transition-colors">
               Termos de Uso
@@ -189,15 +189,15 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] cursor-pointer transform active:scale-98 flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] cursor-pointer transform active:scale-98 flex items-center justify-center gap-2 text-sm sm:text-base"
         >
-          {isLoading && <FiLoader className="animate-spin" size={18} />}
+          {isLoading && <FiLoader className="animate-spin" size={16} />}
           {isLoading ? 'Criando conta...' : 'Criar conta'}
         </button>
       </form>
 
-      <div className="mt-8 text-center">
-        <p className="text-gray-400">
+      <div className="mt-6 sm:mt-8 text-center">
+        <p className="text-gray-400 text-sm sm:text-base">
           Já tem uma conta?{' '}
           <Link
             href="/login"
