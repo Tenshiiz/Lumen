@@ -30,12 +30,12 @@ function ToastNotification() {
     if (!toastState.show) return null
 
     return (
-        <div className="fixed bottom-5 right-5 z-50 max-w-xs sm:max-w-sm bg-gray-900 text-white px-6 py-4.5 rounded-lg shadow-lg border border-gray-700 animate-slide-in-righttransition-opacity duration-300">
+        <div className="fixed bottom-4 right-4 z-50 max-w-xs sm:max-w-sm bg-gray-900 text-white px-4 py-3 sm:px-6 sm:py-4.5 rounded-lg shadow-lg border border-gray-700 animate-slide-in-righttransition-opacity duration-300">
 
             {/* Ícone baseado no tipo do toast (futuramente expandível) */}
             <div className="flex items-center gap-2">
-                <span className="text-green-400 text-sm">✓</span>
-                <span className="text-sm font-medium">{toastState.message}</span>
+                <span className="text-green-400 text-xs sm:text-sm">✓</span>
+                <span className="text-xs sm:text-sm font-medium">{toastState.message}</span>
             </div>
         </div>
     )

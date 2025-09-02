@@ -301,6 +301,30 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
   }, [size]);
 
   /**
+   * FUNÇÃO AUXILIAR PARA EXTRAIR COORDENADAS
+   * Extrai coordenadas relativas ao canvas de eventos mouse ou touch
+   */
+  const getEventCoordinates = useCallback((event: React.MouseEvent<HTMLCanvasElement> | MouseEvent | TouchEvent | React.TouchEvent<HTMLCanvasElement>, canvas: HTMLCanvasElement) => {
+    const rect = canvas.getBoundingClientRect();
+    let clientX: number, clientY: number;
+
+    if ('touches' in event && event.touches && event.touches.length > 0) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else if ('clientX' in event) {
+      clientX = event.clientX;
+      clientY = event.clientY;
+    } else {
+      return { x: 0, y: 0 };
+    }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top
+    };
+  }, []);
+
+  /**
    * MANIPULADORES DE EVENTOS DO MOUSE (COM DRAG GLOBAL)
    *
    * FUNCIONALIDADE DE DRAG FORA DO CANVAS:
@@ -316,9 +340,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     const canvas = backgroundCanvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const { x, y } = getEventCoordinates(event, canvas);
 
     // Limita a posição à borda da roda
     const clampedPosition = clampPositionToWheel(x, y);
@@ -327,7 +349,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     currentColorRef.current = newColor;
     onChange(newColor);
     setPointerPosition(clampedPosition);
-  }, [clampPositionToWheel, positionToColor, onChange]);
+  }, [getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
   // Handler para movimento do mouse (local ao canvas)
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -336,9 +358,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     const canvas = backgroundCanvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const { x, y } = getEventCoordinates(event, canvas);
 
     // Limita a posição à borda da roda
     const clampedPosition = clampPositionToWheel(x, y);
@@ -347,7 +367,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     currentColorRef.current = newColor;
     onChange(newColor);
     setPointerPosition(clampedPosition);
-  }, [isDragging, clampPositionToWheel, positionToColor, onChange]);
+  }, [isDragging, getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
   // Handler global para movimento do mouse (funciona fora do canvas)
   const handleGlobalMouseMove = useCallback((event: MouseEvent) => {
@@ -356,9 +376,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     const canvas = backgroundCanvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const { x, y } = getEventCoordinates(event, canvas);
 
     // Limita a posição à borda da roda
     const clampedPosition = clampPositionToWheel(x, y);
@@ -367,7 +385,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     currentColorRef.current = newColor;
     onChange(newColor);
     setPointerPosition(clampedPosition);
-  }, [isDragging, clampPositionToWheel, positionToColor, onChange]);
+  }, [isDragging, getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
   // Handler para soltar o mouse (para o dragging)
   const handleMouseUp = useCallback(() => {
@@ -381,6 +399,58 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
   const handleMouseLeave = useCallback(() => {
     // Não para o dragging aqui - permite drag fora do canvas
   }, []);
+
+  /**
+   * MANIPULADORES DE EVENTOS DE TOQUE (TOUCH)
+   *
+   * FUNCIONALIDADE DE DRAG POR TOQUE:
+   * - Permite seleção de cores em dispositivos móveis
+   * - Usa event listeners globais para movimento fora do canvas
+   * - Compatível com a lógica existente de mouse
+   */
+  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+
+    const canvas = backgroundCanvasRef.current;
+    if (!canvas) return;
+
+    const { x, y } = getEventCoordinates(event, canvas);
+
+    // Limita a posição à borda da roda
+    const clampedPosition = clampPositionToWheel(x, y);
+
+    const newColor = positionToColor(clampedPosition.x, clampedPosition.y);
+    currentColorRef.current = newColor;
+    onChange(newColor);
+    setPointerPosition(clampedPosition);
+  }, [getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
+
+  // Handler global para movimento por toque (funciona fora do canvas)
+  const handleGlobalTouchMove = useCallback((event: TouchEvent) => {
+    if (!isDragging) return;
+
+    const canvas = backgroundCanvasRef.current;
+    if (!canvas) return;
+
+    const { x, y } = getEventCoordinates(event, canvas);
+
+    // Limita a posição à borda da roda
+    const clampedPosition = clampPositionToWheel(x, y);
+
+    const newColor = positionToColor(clampedPosition.x, clampedPosition.y);
+    currentColorRef.current = newColor;
+    onChange(newColor);
+    setPointerPosition(clampedPosition);
+  }, [isDragging, getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
+
+  // Handler para finalizar toque
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+    if (onCommit) {
+      onCommit(currentColorRef.current);
+    }
+  }, [onCommit]);
 
   /**
    * EFEITOS OTIMIZADOS PARA PERFORMANCE
@@ -423,30 +493,34 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
   }, [color, colorToPosition, isDragging]);
 
   /**
-   * GESTÃO DE EVENTOS GLOBAIS PARA DRAG
+   * GESTÃO DE EVENTOS GLOBAIS PARA DRAG (MOUSE E TOUCH)
    * Permite que o ponteiro continue sendo arrastado mesmo fora do canvas
    *
    * COMO FUNCIONA:
    * 1. Quando isDragging=true, adiciona listeners globais ao documento
-   * 2. handleGlobalMouseMove captura movimento mesmo fora do canvas
-   * 3. handleMouseUp para o dragging quando solta o botão
+   * 2. handleGlobalMouseMove e handleGlobalTouchMove capturam movimento mesmo fora do canvas
+   * 3. handleMouseUp e handleTouchEnd param o dragging quando solta
    * 4. Cleanup automático remove os listeners quando drag para
    *
-   * RESULTADO: Experiência profissional de drag-and-drop!
+   * RESULTADO: Experiência profissional de drag-and-drop em mouse e toque!
    */
   useEffect(() => {
     if (isDragging) {
       // Adiciona listeners globais quando começa o drag
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleGlobalTouchMove);
+      document.addEventListener('touchend', handleTouchEnd);
 
       // Cleanup: remove os listeners quando o componente desmonta ou drag para
       return () => {
         document.removeEventListener('mousemove', handleGlobalMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleGlobalTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isDragging, handleGlobalMouseMove, handleMouseUp]);
+  }, [isDragging, handleGlobalMouseMove, handleMouseUp, handleGlobalTouchMove, handleTouchEnd]);
 
   return (
     <div className="relative inline-block" style={{ width: size + 'px', height: size + 'px' }}>
@@ -467,6 +541,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
         className="absolute inset-0 cursor-crosshair rounded-full"
         style={{ pointerEvents: 'auto' }}
       />

@@ -27,7 +27,7 @@ export default function Home() {
       <Header />
       <main className='relative flex flex-col flex-grow overflow-x-hidden'>
         <Glow />
-        <section className='relative flex min-h-[80vh] sm:min-h-screen justify-center items-center px-4 py-10 sm:py-20'>
+        <section className=' relative flex h-screen sm:min-h-screen justify-center items-center px-4 py-10 sm:py-20'>
           <div className='flex z-10 flex-col text-center items-center max-w-4xl mx-auto'>
             <Image
               src="/logoSemNome.svg"

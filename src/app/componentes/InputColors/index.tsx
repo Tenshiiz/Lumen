@@ -80,14 +80,14 @@ function InputColors({ value, label = 'Nome', width = 'w-full', format = 'hex', 
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-gray-400">{label}</label>
+      <label htmlFor={id} className="text-xs sm:text-sm font-medium text-gray-400">{label}</label>
       <input
         type="text"
         id={id}
         value={displayValue}
         readOnly
         onClick={handleCopy}
-        className={`transform transition-transform duration-200 hover:scale-105 active:scale-95 border border-gray-700 rounded-md p-2 ${width} bg-[#191c1f] text-sm text-center text-white font-mono cursor-pointer`}
+        className={`transform transition-transform duration-200 hover:scale-105 active:scale-95 border border-gray-700 rounded-md p-1 sm:p-1.5 lg:p-2 ${width} bg-[#191c1f] text-xs sm:text-sm text-center text-white font-mono cursor-pointer`}
       />
     </div>
   )

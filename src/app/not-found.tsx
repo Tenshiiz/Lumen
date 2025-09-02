@@ -10,31 +10,31 @@ export default function NotFound() {
           <Image
             src="/logoSemNome.svg"
             alt="Lumen Logo"
-            width={120}
-            height={120}
+            width={80}
+            height={80}
             className="mx-auto"
           />
         </div>
 
         {/* Título com gradiente */}
-        <h1 className="text-8xl font-extrabold tracking-tight bg-gradient-to-r from-sky-400 to-violet-600 bg-clip-text text-transparent mb-4">
+        <h1 className="text-6xl sm:text-8xl font-extrabold tracking-tight bg-gradient-to-r from-sky-400 to-violet-600 bg-clip-text text-transparent mb-4">
           404
         </h1>
 
         {/* Subtítulo */}
-        <h2 className="text-3xl font-bold text-white mb-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
           Página não encontrada
         </h2>
 
         {/* Descrição */}
-        <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto">
+        <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md mx-auto">
           Desculpe, mas a página que você está procurando não existe ou foi movida.
         </p>
 
         {/* Botão de voltar */}
         <Link
           href="/"
-          className="inline-block rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-4 font-semibold text-white shadow-[0_0_30px_rgba(56,189,248,0.35)] transition hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-sky-400/60"
+          className="inline-block rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 sm:px-8 sm:py-4 font-semibold text-white shadow-[0_0_30px_rgba(56,189,248,0.35)] transition hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-sky-400/60"
         >
           Voltar ao Início
         </Link>
