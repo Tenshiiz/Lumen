@@ -20,6 +20,7 @@ export default function Home() {
 
   const mudarCor = (novaCor: string) => {
     setColor(novaCor);
+    setCommittedColor(novaCor);
   };
 
   return (

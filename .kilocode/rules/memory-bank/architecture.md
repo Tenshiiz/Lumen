@@ -30,7 +30,7 @@ O projeto Lumen é uma aplicação web construída com Next.js e segue a estrutu
 
 ## Componentes Principais e Gerenciamento de Estado
 
-*   **`Home` ([`src/app/page.tsx`](src/app/page.tsx:11))**: A página principal que gerencia o estado de cor global (`color` e `colors`). Ela passa o estado e as funções de atualização para os componentes filhos.
+*   **`Home` ([`src/app/page.tsx`](src/app/page.tsx:11))**: A página principal que gerencia o estado de cor global (`color` e `colors`). Ela passa o estado e uma função de atualização (`mudarCor`) para os componentes filhos, que unifica a atualização tanto do estado de preview quanto do estado final da cor, centralizando o fluxo de seleção.
 *   **`PickerColor` ([`src/app/componentes/PickerColor/index.tsx`](src/app/componentes/PickerColor/index.tsx:16))**: Componente `client-side` que recebe o estado de cor da `Home`. Ele gerencia um estado interno (`committedColor`) para controlar a atualização dos `InputColors` e sincroniza esse estado com a prop `cor` vinda da `Home` através de um `useEffect`.
 *   **`RodaDeCores` ([`src/app/componentes/RodaDeCores/index.tsx`](src/app/componentes/RodaDeCores/index.tsx:24))**: Componente `client-side` customizado. Ele agora possui duas props de callback:
     *   `onChange`: Chamada em tempo real durante o arraste do mouse para atualizar o preview visual.
@@ -49,3 +49,4 @@ O projeto Lumen é uma aplicação web construída com Next.js e segue a estrutu
 *   **Separação de Eventos de Cor:** A `RodaDeCores` agora distingue entre uma mudança de cor em tempo real (`onChange`) e uma confirmação de cor (`onCommit`), permitindo um controle mais granular da experiência do usuário.
 *   **Route Groups para Performance**: A pasta `(auth)` é usada para aplicar um layout específico e mais leve às páginas de login/registro, evitando o carregamento do `Header` completo e das sidebars.
 *   **Sistema de Notificações Global**: Utiliza Context API para gerenciamento de notificações toast, permitindo que qualquer componente da aplicação mostre mensagens temporárias sem precisar passar props através de vários níveis da árvore de componentes.
+*   **Prevenção de Scroll no Mobile**: Para melhorar a usabilidade em dispositivos de toque, `event.preventDefault()` foi adicionado ao manipulador de `touchmove` no componente `RodaDeCores`. Isso impede que a página role verticalmente enquanto o usuário interage com a roda de cores.

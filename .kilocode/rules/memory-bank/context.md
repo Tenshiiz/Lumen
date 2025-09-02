@@ -15,6 +15,8 @@
     *   **Sincronização de Estado:** Adicionado um `useEffect` em `PickerColor` para garantir que a seleção de cor externa (vinda da `SideLeftbar`) seja refletida corretamente nos `InputColors`.
     *   **Atualização do Memory Bank:** A documentação da arquitetura foi atualizada para refletir a nova estrutura de gerenciamento de estado e autenticação.
     *   **Limpeza do README.md:** O arquivo `README.md` principal foi limpo, removendo conflitos de merge e atualizado com o link da aplicação.
+    *   **Correção do bug de duplicação de cores ao clicar em 'Cores Recentes'.**
+    *   **Correção do bug de scroll da página ao interagir com a Roda de Cores em dispositivos móveis.**
 *   **Próximos Passos:**
     *   Implementar a lógica de autenticação real nas páginas de login e registro usando o cliente Supabase.
     *   Implementar funcionalidade de salvamento de cores e paletas na `SideLeftbar` e `SideRightbar`.

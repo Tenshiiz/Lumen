@@ -430,6 +430,8 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
   const handleGlobalTouchMove = useCallback((event: TouchEvent) => {
     if (!isDragging) return;
 
+    event.preventDefault(); // Previne o scroll da página durante o drag
+
     const canvas = backgroundCanvasRef.current;
     if (!canvas) return;
 
@@ -509,7 +511,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
       // Adiciona listeners globais quando começa o drag
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleGlobalTouchMove);
+      document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
       document.addEventListener('touchend', handleTouchEnd);
 
       // Cleanup: remove os listeners quando o componente desmonta ou drag para
