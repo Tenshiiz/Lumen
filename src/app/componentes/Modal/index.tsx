@@ -50,7 +50,7 @@ export default function Modal({ isOpen, onClose, title, message, type, children 
           className={`absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-300 ease-out transform ${isOpen ? 'scale-100 opacity-100 rotate-0' : 'scale-0 opacity-0 rotate-45'}`}
           style={{ animationDelay: '0.8s' }}
         >
-          <FiX size={20} />
+          <FiX size={30} />
         </button>
 
         {/* Ícone */}

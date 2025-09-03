@@ -7,12 +7,39 @@ import SideLeftbar from './componentes/SideLeftbar';
 import PickerColor from './componentes/PickerColor';
 import SideRightbar from './componentes/SideRightbar';
 import { useEffect, useState } from 'react';
+import supabase from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js"
 
 export default function Home() {
 
   const [color, setColor] = useState('#FFFFFF')
   const [colors, setColors] = useState(Array(8).fill("#191c1f"));
   const [committedColor, setCommittedColor] = useState('#FFFFFF')
+
+  const [user, setUser] = useState<User | null>(null); // ← Guarda dados do usuário
+  const [loading, setLoading] = useState(true); // ← Controla carregamento
+
+  useEffect(() => {
+    async function verificarLogin() {
+      // Pergunta pro Supabase: "tem alguém logado?"
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        // TEM alguém logado!
+        setUser(session.user); // ← Salva os dados da pessoa
+        console.log("✅ LOGADO! Email:", session.user.email); // ← SÓ ESSA LINHA
+      } else {
+        // NÃO tem ninguém logado
+        setUser(null); // ← Deixa vazio
+        console.log("❌ NÃO LOGADO!"); // ← E ESSA LINHA
+      }
+
+      setLoading(false); // ← Para de mostrar "carregando"
+    }
+
+    verificarLogin(); // ← Executa a função
+  }, []); // ← [] = executa só 1 vez quando página carrega
+
 
   useEffect(() => {
     setColors(prev => [committedColor, ...prev.filter(c => c !== committedColor)].slice(0, 8));
@@ -22,10 +49,19 @@ export default function Home() {
     setColor(novaCor);
     setCommittedColor(novaCor);
   };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-black">
+        <div className="text-white text-xl">
+          Verificando login... ⏳
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header user={user}/>
       <main className='relative flex flex-col flex-grow overflow-x-hidden'>
         <Glow />
         <section className=' relative flex h-screen sm:min-h-screen justify-center items-center px-4 py-10 sm:py-20'>
@@ -36,6 +72,7 @@ export default function Home() {
               width={140}
               height={130}
               className="mb-4"
+              style={{ height: 'auto' }}
             />
             <h1 className="text-4xl sm:text-5xl lg:text-6xl mb-3 font-extrabold tracking-tight bg-gradient-to-r from-sky-400 to-violet-600 bg-clip-text text-transparent">
               Lumen

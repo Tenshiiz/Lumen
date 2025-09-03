@@ -5,13 +5,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BsMoon, BsSun } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
 import { HiMenu } from 'react-icons/hi';
+import type { User } from '@supabase/supabase-js'
+import supabase from "@/lib/supabase"; // ← Seu supabase que já existe
+import { useRouter } from 'next/navigation';
 
-function Header() {
+interface HeaderProps {
+  user: User | null; // ← Recebe o user
+}
+
+function Header({ user }: HeaderProps) {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   const listaNav = [
     { item: "Seletor De Cor", href: "#PickerColor" },
@@ -24,6 +33,31 @@ function Header() {
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     console.log("Tema alterado para:", isDarkMode ? "Claro" : "Escuro");
+  };
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true); // ← Mostra "carregando..."
+
+      // Faz o logout no Supabase
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error('Erro no logout:', error.message);
+        alert('Erro ao fazer logout. Tente novamente.');
+        return;
+      }
+      // Fecha o dropdown
+      setIsDropdownOpen(false);
+      // Volta pra página inicial
+      router.push('/');
+      window.location.reload(); // ← Atualiza a página
+
+    } catch (error) {
+      console.error('Erro inesperado:', error);
+      alert('Erro inesperado. Tente novamente.');
+    } finally {
+      setIsLoggingOut(false); // ← Para de mostrar "carregando..."
+    }
   };
 
   useEffect(() => {
@@ -89,6 +123,8 @@ function Header() {
         alt="Logo da Aplicação"
         width={150}
         height={150}
+        priority
+        style={{ height: 'auto' }}
       />
 
       {/* OVERLAY COM FUNDO SÓLIDO - Sem backdrop-blur */}
@@ -184,26 +220,46 @@ function Header() {
           </button>
 
           <div className={`
-            absolute right-0 mt-2 w-30 text-center bg-[#191c1f] border border-gray-700 rounded-lg shadow-lg z-50 
-            transition-all duration-500 ease-in-out 
+            absolute right-0 mt-2 w-48 text-center bg-gradient-to-br from-blue-900/90 via-cyan-900/90 to-blue-800/90 border border-cyan-400/50 rounded-xl shadow-2xl shadow-cyan-400/20 backdrop-blur-md z-50
+            transition-all duration-500 ease-in-out
             ${isDropdownOpen
               ? "opacity-100 scale-100 pointer-events-auto"
               : "opacity-0 scale-95 pointer-events-none"
             }
           `}>
             <div className="py-1">
-              <a
-                href="login"
-                className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-              >
-                Entrar
-              </a>
-              <a
-                href="register"
-                className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-              >
-                Registrar
-              </a>
+              {user ? (
+                <>
+                  <a href='Account' className={`block px-4 py-2 text-sm text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors`}>
+                    👤 Minha conta
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className={`
+                      w-full cursor-pointer block px-4 py-2 text-sm text-gray-300
+                      hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors
+                      ${isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''}
+                    `}
+                  >
+                    {isLoggingOut ? '⏳ Saindo...' : '🚪 Sair'}
+                  </button></>
+              ) : (
+                <>
+                  <a
+                    href="login"
+                    className={`block px-4 py-2 text-sm text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors`}
+                  >
+                    🔐 Entrar
+                  </a>
+                  <a
+                    href="register"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-cyan-500/20 hover:text-cyan-300 transition-colors"
+                  >
+                    📝 Registrar
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>

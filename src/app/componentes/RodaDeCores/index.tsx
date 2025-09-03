@@ -408,7 +408,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
    * - Usa event listeners globais para movimento fora do canvas
    * - Compatível com a lógica existente de mouse
    */
-  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLCanvasElement>) => {
+  const handleTouchStart = useCallback((event: TouchEvent) => {
     event.preventDefault();
     setIsDragging(true);
 
@@ -524,6 +524,17 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     }
   }, [isDragging, handleGlobalMouseMove, handleMouseUp, handleGlobalTouchMove, handleTouchEnd]);
 
+  // Adiciona listener manual para touchstart com passive: false
+  useEffect(() => {
+    const canvas = pointerCanvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+      return () => {
+        canvas.removeEventListener('touchstart', handleTouchStart);
+      };
+    }
+  }, [handleTouchStart]);
+
   return (
     <div className="relative inline-block" style={{ width: size + 'px', height: size + 'px' }}>
       {/* Canvas do fundo (pré-renderizado) */}
@@ -543,7 +554,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
         className="absolute inset-0 cursor-crosshair rounded-full"
         style={{ pointerEvents: 'auto' }}
       />

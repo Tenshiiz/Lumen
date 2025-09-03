@@ -2,22 +2,60 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import supabase from "@/lib/supabase";
+import { useRouter } from 'next/navigation';
+import Modal from '../../componentes/Modal'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info' as 'success' | 'error' | 'info'
+  });
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de login (substitua por sua lógica real)
-    setTimeout(() => {
-      console.log('Login attempt:', { email, password });
-      setIsLoading(false);
-      // Aqui você implementaria a lógica de autenticação
-    }, 1000);
+    // Chamar Supabase para fazer login
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      // Se deu erro
+      setModal({
+        isOpen: true,
+        title: 'Erro no login',
+        message: 'Email ou senha incorretos.',
+        type: 'error'
+      });
+      console.log('Erro:', error.message);
+    } else {
+      // Se deu certo
+      setModal({
+        isOpen: true,
+        title: 'Login realizado',
+        message: 'Bem-vindo de volta! Redirecionando...',
+        type: 'success'
+      });
+      console.log('Usuário logado:', data);
+
+      // Redirecionar após 1 segundo
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -77,7 +115,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] text-sm sm:text-base"
+          className="transition-all transform active:scale-98 cursor-pointer w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(56,189,248,0.3)] text-sm sm:text-base"
         >
           {isLoading ? 'Entrando...' : 'Entrar'}
         </button>
@@ -94,6 +132,13 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+      <Modal
+        isOpen={modal.isOpen}
+        onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+      />
     </div>
   );
 }

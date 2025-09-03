@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FiLoader } from 'react-icons/fi';
 import supabase from "@/lib/supabase"
 import Modal from '../../componentes/Modal';
+import { useRouter } from 'next/navigation';
 
 
 export default function RegisterPage() {
@@ -15,6 +16,7 @@ export default function RegisterPage() {
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const [modal, setModal] = useState({
     isOpen: false,
     title: '',
@@ -90,6 +92,9 @@ export default function RegisterPage() {
         password: '',
         confirmPassword: ''
       });
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
     }
 
     setIsLoading(false);
