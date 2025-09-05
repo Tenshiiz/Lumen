@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Inter } from "next/font/google"; // Importa a fonte Inter
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ToastProvider } from "../context/ToastContext"; // Importa o provedor do contexto do toast
-import ToastNotification from "./componentes/ToastNotification"; // Importa o componente de notificação
+import { ToastProvider } from "../context/ToastContext";
+import ToastNotification from "./componentes/ToastNotification";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,11 +15,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Instancia a fonte Inter
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  display: "swap", // Adiciona display: "swap" para melhor performance
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -35,13 +34,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`} // Adiciona a variável da fonte Inter
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
-        {/* ToastProvider envolve toda a aplicação para fornecer o contexto do toast */}
         <ToastProvider>
           {children}
-          {/* ToastNotification é renderizado aqui, no nível mais alto da aplicação,
-              fora de qualquer contêiner que possa interferir no seu posicionamento fixo */}
           <ToastNotification />
         </ToastProvider>
       </body>

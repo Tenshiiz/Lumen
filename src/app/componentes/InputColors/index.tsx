@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useToast } from '../../../context/ToastContext' // Hook para mostrar notificações globais
+import { useToast } from '../../../context/ToastContext' 
 
 interface InputColorsProps {
   value: string

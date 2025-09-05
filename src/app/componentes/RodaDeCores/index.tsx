@@ -2,47 +2,31 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 
-/**
- * COMPONENTE RODA DE CORES CUSTOMIZADO
- *
- * Este componente cria uma roda de cores interativa onde:
- * - As cores puras ficam na borda externa (matiz)
- * - As cores vão se tornando brancas conforme se aproximam do centro (saturação)
- * - O usuário pode clicar e arrastar para selecionar cores
- *
- * @param {Object} props
- * @param {string} props.color - Cor inicial em formato hex (#RRGGBB)
- * @param {function} props.onChange - Callback chamado quando a cor muda
- * @param {number} props.size - Tamanho da roda em pixels (padrão: 200)
- */
 interface RodaDeCoresProps {
   color: string;
   onChange: (color: string) => void;
+  /**
+   * DIFERENÇA ENTRE onChange E onCommit:
+   * - onChange: Chamado em tempo real durante o arraste do mouse, para preview visual imediato
+   * - onCommit: Chamado apenas ao soltar o mouse, para confirmar a cor final selecionada
+   * - Permite desacoplar preview (rápido) de confirmação (definitiva) para melhor UX
+   */
   onCommit?: (color: string) => void;
   size?: number;
 }
 
 function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps) {
-  // Referências para os elementos canvas (fundo e ponteiro)
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
   const pointerCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Referência para armazenar a cor atual durante o arrasto
   const currentColorRef = useRef(color);
 
-  // Estado para controlar se o usuário está arrastando
   const [isDragging, setIsDragging] = useState(false);
 
-  // Estado para armazenar a posição atual do ponteiro
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
 
-  // Estado para armazenar a imagem pré-renderizada do fundo
   const [backgroundImage, setBackgroundImage] = useState<ImageData | null>(null);
 
-  /**
-   * CONVERSÃO DE CORES
-   * Função auxiliar para converter HSL para RGB
-   */
   const hslToRgb = useCallback((h: number, s: number, l: number): [number, number, number] => {
     const c = (1 - Math.abs(2 * l - 1)) * s;
     const x = c * (1 - Math.abs((h / 60) % 2 - 1));
@@ -71,10 +55,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     ];
   }, []);
 
-  /**
-   * CONVERSÃO DE CORES
-   * Função auxiliar para converter RGB para Hex
-   */
   const rgbToHex = useCallback((r: number, g: number, b: number): string => {
     const toHex = (n: number) => {
       const hex = Math.round(n).toString(16);
@@ -84,10 +64,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
   }, []);
 
 
-  /**
-   * PRÉ-RENDERIZAÇÃO DO FUNDO DA RODA
-   * Cria uma imagem pré-renderizada do fundo (executado apenas uma vez)
-   */
   const createBackgroundImage = useCallback(() => {
     const canvas = document.createElement('canvas');
     canvas.width = size;
@@ -104,6 +80,7 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     const data = imageData.data;
 
     // Preenche pixel por pixel (mais eficiente que fillRect em loop)
+    // LÓGICA DE RENDERIZAÇÃO DO CANVAS: A roda de cores é desenhada pixel por pixel usando ImageData para performance
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {
         const dx = x - centerX;
@@ -131,10 +108,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     return imageData;
   }, [size, hslToRgb]);
 
-  /**
-   * DESENHO DO FUNDO (OTIMIZADO)
-   * Desenha a imagem pré-renderizada no canvas de fundo
-   */
   const drawBackground = useCallback(() => {
     const canvas = backgroundCanvasRef.current;
     if (!canvas) return;
@@ -147,10 +120,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     }
   }, [backgroundImage]);
 
-  /**
-   * DESENHO DO PONTEIRO (OTIMIZADO)
-   * Desenha apenas o ponteiro no canvas separado
-   */
   const drawPointer = useCallback(() => {
     const canvas = pointerCanvasRef.current;
     if (!canvas) return;
@@ -177,46 +146,31 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     ctx.stroke();
   }, [pointerPosition, size]);
 
-  /**
-   * CONVERSÃO DE POSIÇÃO PARA COR
-   * Converte coordenadas (x, y) do mouse para valores HSL
-   */
   const positionToColor = useCallback((x: number, y: number): string => {
     const centerX = size / 2;
     const centerY = size / 2;
     const radius = size / 2 - 10;
 
-    // Calcula a distância do centro
     const dx = x - centerX;
     const dy = y - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Se estiver fora do círculo, retorna a cor atual
     if (distance > radius) return color;
 
-    // Calcula o ângulo (matiz)
+    // CÁLCULOS MATEMÁTICOS PARA CONVERSÃO DE COORDENADAS EM HSL:
+    // - Ângulo (hue): Calculado com Math.atan2(dy, dx) convertido para graus (0-360°)
+    // - Distância do centro (saturation): Normalizada pelo raio da roda (0-1)
+    // - Luminosidade: Fixa em 0.5 + ajuste baseado na saturação para cores vibrantes
     const angle = Math.atan2(dy, dx);
     const hue = ((angle * 180 / Math.PI) + 360) % 360;
 
-    // Calcula a saturação baseada na distância
     const saturation = Math.min(distance / radius, 1);
 
-    // Converte para RGB e depois para Hex
     const lightness = 0.5 + (1 - saturation) * 0.3;
     const [r, g, b] = hslToRgb(hue, saturation, lightness);
     return rgbToHex(r, g, b);
   }, [size, color, hslToRgb, rgbToHex]);
 
-  /**
-   * CONVERSÃO DE COR PARA POSIÇÃO
-   * Converte uma cor hex para coordenadas (x, y) na roda
-   *
-   * Esta função implementa a conversão inversa da positionToColor:
-   * 1. Converte hex → RGB → HSL
-   * 2. Usa o hue para calcular o ângulo na roda
-   * 3. Usa a saturação para calcular a distância do centro
-   * 4. Converte coordenadas polares para cartesianas
-   */
   const colorToPosition = useCallback((hexColor: string): { x: number; y: number } => {
     // Converte hex para RGB
     const r = parseInt(hexColor.slice(1, 3), 16);
@@ -266,18 +220,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     return { x, y };
   }, [size]);
 
-  /**
-   * LIMITAR POSIÇÃO À BORDA DA RODA
-   * Garante que o ponteiro fique sempre dentro da roda de cores
-   *
-   * CORREÇÃO DO PROBLEMA: Antes o ponteiro podia "atravessar" as bordas da roda
-   * e ir para áreas vazias do canvas. Agora ele sempre fica na borda da roda.
-   *
-   * Lógica:
-   * 1. Calcula a distância do centro
-   * 2. Se estiver dentro da roda → retorna posição original
-   * 3. Se estiver fora → calcula posição na borda mantendo o mesmo ângulo
-   */
   const clampPositionToWheel = useCallback((x: number, y: number): { x: number; y: number } => {
     const centerX = size / 2;
     const centerY = size / 2;
@@ -300,10 +242,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     return { x: clampedX, y: clampedY };
   }, [size]);
 
-  /**
-   * FUNÇÃO AUXILIAR PARA EXTRAIR COORDENADAS
-   * Extrai coordenadas relativas ao canvas de eventos mouse ou touch
-   */
   const getEventCoordinates = useCallback((event: React.MouseEvent<HTMLCanvasElement> | MouseEvent | TouchEvent | React.TouchEvent<HTMLCanvasElement>, canvas: HTMLCanvasElement) => {
     const rect = canvas.getBoundingClientRect();
     let clientX: number, clientY: number;
@@ -324,15 +262,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     };
   }, []);
 
-  /**
-   * MANIPULADORES DE EVENTOS DO MOUSE (COM DRAG GLOBAL)
-   *
-   * FUNCIONALIDADE DE DRAG FORA DO CANVAS:
-   * - Quando o usuário clica no ponteiro, o dragging começa
-   * - Mesmo que o mouse saia do canvas, o ponteiro continua sendo arrastado
-   * - Só para quando o usuário solta o botão do mouse
-   * - Usa event listeners globais do documento para capturar movimento fora do canvas
-   */
   const handleMouseDown = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
     setIsDragging(true);
@@ -342,7 +271,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
 
     const { x, y } = getEventCoordinates(event, canvas);
 
-    // Limita a posição à borda da roda
     const clampedPosition = clampPositionToWheel(x, y);
 
     const newColor = positionToColor(clampedPosition.x, clampedPosition.y);
@@ -351,7 +279,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     setPointerPosition(clampedPosition);
   }, [getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
-  // Handler para movimento do mouse (local ao canvas)
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDragging) return;
 
@@ -369,7 +296,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     setPointerPosition(clampedPosition);
   }, [isDragging, getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
-  // Handler global para movimento do mouse (funciona fora do canvas)
   const handleGlobalMouseMove = useCallback((event: MouseEvent) => {
     if (!isDragging) return;
 
@@ -387,7 +313,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     setPointerPosition(clampedPosition);
   }, [isDragging, getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
-  // Handler para soltar o mouse (para o dragging)
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     if (onCommit) {
@@ -395,19 +320,10 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     }
   }, [onCommit]);
 
-  // Handler para quando o mouse sai do canvas (mas continua dragging)
   const handleMouseLeave = useCallback(() => {
     // Não para o dragging aqui - permite drag fora do canvas
   }, []);
 
-  /**
-   * MANIPULADORES DE EVENTOS DE TOQUE (TOUCH)
-   *
-   * FUNCIONALIDADE DE DRAG POR TOQUE:
-   * - Permite seleção de cores em dispositivos móveis
-   * - Usa event listeners globais para movimento fora do canvas
-   * - Compatível com a lógica existente de mouse
-   */
   const handleTouchStart = useCallback((event: TouchEvent) => {
     event.preventDefault();
     setIsDragging(true);
@@ -426,7 +342,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     setPointerPosition(clampedPosition);
   }, [getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
-  // Handler global para movimento por toque (funciona fora do canvas)
   const handleGlobalTouchMove = useCallback((event: TouchEvent) => {
     if (!isDragging) return;
 
@@ -446,7 +361,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     setPointerPosition(clampedPosition);
   }, [isDragging, getEventCoordinates, clampPositionToWheel, positionToColor, onChange]);
 
-  // Handler para finalizar toque
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
     if (onCommit) {
@@ -454,39 +368,22 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     }
   }, [onCommit]);
 
-  /**
-   * EFEITOS OTIMIZADOS PARA PERFORMANCE
-   *
-   * ESTRATÉGIA DE RENDERIZAÇÃO EM CAMADAS:
-   * - Fundo: Pré-renderizado uma vez (ImageData)
-   * - Ponteiro: Renderizado em canvas separado
-   * - Movimento: Apenas o ponteiro é redesenhado
-   *
-   * 1. Cria imagem do fundo quando componente monta
-   * 2. Desenha fundo apenas uma vez
-   * 3. Desenha ponteiro apenas quando necessário
-   * 4. Atualiza posição apenas quando cor muda externamente
-   */
 
-  // Cria a imagem pré-renderizada do fundo
   useEffect(() => {
     const imageData = createBackgroundImage();
     setBackgroundImage(imageData);
   }, [createBackgroundImage]);
 
-  // Desenha o fundo quando a imagem estiver pronta
   useEffect(() => {
     if (backgroundImage) {
       drawBackground();
     }
   }, [backgroundImage, drawBackground]);
 
-  // Desenha o ponteiro quando a posição muda
   useEffect(() => {
     drawPointer();
   }, [drawPointer]);
 
-  // Atualiza a posição do ponteiro quando a cor muda (apenas se não estiver arrastando)
   useEffect(() => {
     if (!isDragging) {
       const position = colorToPosition(color);
@@ -494,18 +391,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     }
   }, [color, colorToPosition, isDragging]);
 
-  /**
-   * GESTÃO DE EVENTOS GLOBAIS PARA DRAG (MOUSE E TOUCH)
-   * Permite que o ponteiro continue sendo arrastado mesmo fora do canvas
-   *
-   * COMO FUNCIONA:
-   * 1. Quando isDragging=true, adiciona listeners globais ao documento
-   * 2. handleGlobalMouseMove e handleGlobalTouchMove capturam movimento mesmo fora do canvas
-   * 3. handleMouseUp e handleTouchEnd param o dragging quando solta
-   * 4. Cleanup automático remove os listeners quando drag para
-   *
-   * RESULTADO: Experiência profissional de drag-and-drop em mouse e toque!
-   */
   useEffect(() => {
     if (isDragging) {
       // Adiciona listeners globais quando começa o drag
@@ -524,7 +409,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
     }
   }, [isDragging, handleGlobalMouseMove, handleMouseUp, handleGlobalTouchMove, handleTouchEnd]);
 
-  // Adiciona listener manual para touchstart com passive: false
   useEffect(() => {
     const canvas = pointerCanvasRef.current;
     if (canvas) {
@@ -537,7 +421,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
 
   return (
     <div className="relative inline-block" style={{ width: size + 'px', height: size + 'px' }}>
-      {/* Canvas do fundo (pré-renderizado) */}
       <canvas
         ref={backgroundCanvasRef}
         width={size}
@@ -545,7 +428,6 @@ function RodaDeCores({ color, onChange, onCommit, size = 200 }: RodaDeCoresProps
         className="absolute inset-0 cursor-crosshair rounded-full border-2 border-gray-800"
       />
 
-      {/* Canvas do ponteiro (sobreposto) */}
       <canvas
         ref={pointerCanvasRef}
         width={size}

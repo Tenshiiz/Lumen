@@ -6,11 +6,11 @@ import { BsMoon, BsSun } from 'react-icons/bs';
 import { FaUserCircle } from 'react-icons/fa';
 import { HiMenu } from 'react-icons/hi';
 import type { User } from '@supabase/supabase-js'
-import supabase from "@/lib/supabase"; // ← Seu supabase que já existe
+import supabase from "@/lib/supabase"; 
 import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
-  user: User | null; // ← Recebe o user
+  user: User | null; 
 }
 
 function Header({ user }: HeaderProps) {
@@ -36,9 +36,9 @@ function Header({ user }: HeaderProps) {
   };
   const handleLogout = async () => {
     try {
-      setIsLoggingOut(true); // ← Mostra "carregando..."
+      setIsLoggingOut(true); 
 
-      // Faz o logout no Supabase
+      
       const { error } = await supabase.auth.signOut();
 
       if (error) {
@@ -46,30 +46,30 @@ function Header({ user }: HeaderProps) {
         alert('Erro ao fazer logout. Tente novamente.');
         return;
       }
-      // Fecha o dropdown
+      
       setIsDropdownOpen(false);
-      // Volta pra página inicial
+      
       router.push('/');
-      window.location.reload(); // ← Atualiza a página
+      window.location.reload(); 
 
     } catch (error) {
       console.error('Erro inesperado:', error);
       alert('Erro inesperado. Tente novamente.');
     } finally {
-      setIsLoggingOut(false); // ← Para de mostrar "carregando..."
+      setIsLoggingOut(false); 
     }
   };
 
   useEffect(() => {
     if (isMobileNavOpen) {
-      // Bloqueia o scroll
+      
       document.body.style.overflow = 'hidden';
     } else {
-      // Restaura o scroll
+      
       document.body.style.overflow = 'unset';
     }
 
-    // Cleanup: sempre restaura o scroll quando o componente desmonta
+    
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -114,8 +114,8 @@ function Header({ user }: HeaderProps) {
       border-b border-l border-r border-gray-800 
       transition-all duration-300
       ${isScrolled
-        ? 'backdrop-blur-md bg-[#090A0B]/20' // Fundo semi-transparente + blur
-        : 'bg-[#090A0B]/50' // Fundo sólido sem scroll
+        ? 'backdrop-blur-md bg-[#090A0B]/20' 
+        : 'bg-[#090A0B]/50' 
       }
     `}>
       <Image
@@ -124,10 +124,9 @@ function Header({ user }: HeaderProps) {
         width={150}
         height={150}
         priority
-        style={{ height: 'auto' }}
       />
 
-      {/* OVERLAY COM FUNDO SÓLIDO - Sem backdrop-blur */}
+      {}
       <div
         onClick={() => setIsMobileNavOpen(false)}
         className={`
@@ -176,14 +175,14 @@ function Header({ user }: HeaderProps) {
                   relative overflow-hidden
                 "
               >
-                {/* Efeito de brilho sutil */}
+                {}
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
                                bg-gradient-to-r from-transparent via-white/5 to-transparent"></span>
 
-                {/* Texto */}
+                {}
                 <span className="relative z-10">{item.item}</span>
 
-                {/* Indicador de foco mobile */}
+                {}
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-r-full
                                opacity-0 group-hover:opacity-100 transition-all duration-300
                                md:hidden"></span>
@@ -192,7 +191,7 @@ function Header({ user }: HeaderProps) {
           ))}
         </ul>
 
-        {/* Decoração extra para mobile */}
+        {}
         <div className="mt-8 pt-6 border-t border-gray-700/30 md:hidden">
           <div className="flex justify-center items-center gap-2 text-gray-400 text-sm">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
@@ -203,7 +202,7 @@ function Header({ user }: HeaderProps) {
       </nav>
 
       <div className="flex items-center md:gap-3">
-        {/* Mobile Menu Button */}
+        {}
         <button
           onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
           className="md:hidden cursor-pointer flex justify-center p-3 items-center rounded-3xl backdrop-blur-sm hover:bg-white/10 transition-colors"

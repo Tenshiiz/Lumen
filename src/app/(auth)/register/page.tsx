@@ -36,7 +36,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Validar se senhas são iguais
+    
     if (formData.password !== formData.confirmPassword) {
       setModal({
         isOpen: true,
@@ -48,20 +48,20 @@ export default function RegisterPage() {
       return;
     }
 
-    // Chamar Supabase para registrar
+    
     const { data, error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
       options: {
         data: {
-          name: formData.name  // Salva o nome nos metadados
+          name: formData.name  
         },
-        emailRedirectTo: undefined  // Desabilita redirecionamento de e-mail
+        emailRedirectTo: undefined  
       }
     });
 
     if (error) {
-      // Verificar se é erro de e-mail já existente
+      
       if (error.message.includes('User already registered') || error.message.includes('already been registered')) {
         setModal({
           isOpen: true,
@@ -85,7 +85,7 @@ export default function RegisterPage() {
         type: 'success'
       });
 
-      // Limpar formulário
+      
       setFormData({
         name: '',
         email: '',
@@ -213,7 +213,7 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      {/* Modal de Feedback */}
+      {}
       <Modal
         isOpen={modal.isOpen}
         onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}

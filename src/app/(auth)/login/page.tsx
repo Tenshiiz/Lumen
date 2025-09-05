@@ -24,14 +24,14 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Chamar Supabase para fazer login
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
     if (error) {
-      // Se deu erro
+      
       setModal({
         isOpen: true,
         title: 'Erro no login',
@@ -40,7 +40,7 @@ export default function LoginPage() {
       });
       console.log('Erro:', error.message);
     } else {
-      // Se deu certo
+      
       setModal({
         isOpen: true,
         title: 'Login realizado',
@@ -49,7 +49,7 @@ export default function LoginPage() {
       });
       console.log('Usuário logado:', data);
 
-      // Redirecionar após 1 segundo
+      
       setTimeout(() => {
         router.push('/');
       }, 2000);

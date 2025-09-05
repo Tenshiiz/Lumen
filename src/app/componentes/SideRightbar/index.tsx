@@ -1,13 +1,13 @@
 function SideRightbar() {
     const colors = [
-        '#ef4444', // red-500
-        '#ec4899', // pink-500  
-        '#a855f7', // purple-500
-        '#3b82f6', // blue-500
-        '#06b6d4', // cyan-500
-        '#10b981', // emerald-500
-        '#84cc16', // lime-500
-        '#22c55e', // green-500
+        '#ef4444', 
+        '#ec4899', 
+        '#a855f7', 
+        '#3b82f6', 
+        '#06b6d4', 
+        '#10b981', 
+        '#84cc16', 
+        '#22c55e', 
     ];
 
     const savedPalettes = [

@@ -25,7 +25,7 @@ body {
   font-family: var(--font-inter); /* Aplica a fonte Inter definida em layout.tsx */
   padding: 0px 0px;
   background: #090A0B;
-  color: var(--foreground);
+  color: var(--foreground, #ffffff);
 }
 
 /* Animação customizada para o modal */

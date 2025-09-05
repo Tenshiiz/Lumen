@@ -1,5 +1,5 @@
 interface SideLeftbarProps {
-  colors: string[]; // um array de strings (hexadecimal das cores)
+  colors: string[]; 
   onColorSelect: (color: string) => void;
 }
 

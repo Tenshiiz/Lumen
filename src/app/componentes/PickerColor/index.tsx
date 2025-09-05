@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import RodaDeCores from '../RodaDeCores'
 import InputColors from '../InputColors'
-import { useToast } from '../../../context/ToastContext' // Hook para mostrar notificações globais
+import { useToast } from '../../../context/ToastContext'
 interface PickerColorProps {
   cor: string;
   setarCor: (value: string) => void;
@@ -13,23 +13,20 @@ interface PickerColorProps {
 
 function PickerColor({ cor, setarCor, setValor }: PickerColorProps) {
 
-  // Hook do contexto do toast para mostrar notificações
   const { showToast } = useToast()
 
-  // Estado para o tamanho da roda baseado no breakpoint
   const [rodaSize, setRodaSize] = useState(240)
 
-  // Ajusta o tamanho da roda baseado na largura da tela
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1024) { // lg breakpoint
-        setRodaSize(180) // tamanho menor para mobile
+      if (window.innerWidth < 1024) { 
+        setRodaSize(180) 
       } else {
-        setRodaSize(240) // tamanho original para desktop
+        setRodaSize(240) 
       }
     }
 
-    handleResize() // executa na montagem
+    handleResize() 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
@@ -48,6 +45,7 @@ function PickerColor({ cor, setarCor, setValor }: PickerColorProps) {
 
         <div className='flex flex-col items-center lg:items-start'>
           <div className="relative w-48 sm:w-64 lg:w-75 h-20 sm:h-24 lg:h-32 rounded-xl group" style={{ backgroundColor: cor }}>
+            {}
             <button
               onClick={() => {
                 navigator.clipboard.writeText(cor).then(() => {

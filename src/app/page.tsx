@@ -6,6 +6,7 @@ import Image from 'next/image';
 import SideLeftbar from './componentes/SideLeftbar';
 import PickerColor from './componentes/PickerColor';
 import SideRightbar from './componentes/SideRightbar';
+import Modal from './componentes/Modal';
 import { useEffect, useState } from 'react';
 import supabase from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js"
@@ -16,29 +17,27 @@ export default function Home() {
   const [colors, setColors] = useState(Array(8).fill("#191c1f"));
   const [committedColor, setCommittedColor] = useState('#FFFFFF')
 
-  const [user, setUser] = useState<User | null>(null); // ← Guarda dados do usuário
-  const [loading, setLoading] = useState(true); // ← Controla carregamento
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isConstructionModalOpen, setIsConstructionModalOpen] = useState(true);
 
   useEffect(() => {
     async function verificarLogin() {
-      // Pergunta pro Supabase: "tem alguém logado?"
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
-        // TEM alguém logado!
-        setUser(session.user); // ← Salva os dados da pessoa
-        console.log("✅ LOGADO! Email:", session.user.email); // ← SÓ ESSA LINHA
+        setUser(session.user);
+        console.log("✅ LOGADO! Email:", session.user.email);
       } else {
-        // NÃO tem ninguém logado
-        setUser(null); // ← Deixa vazio
-        console.log("❌ NÃO LOGADO!"); // ← E ESSA LINHA
+        setUser(null);
+        console.log("❌ NÃO LOGADO!");
       }
 
-      setLoading(false); // ← Para de mostrar "carregando"
+      setLoading(false);
     }
 
-    verificarLogin(); // ← Executa a função
-  }, []); // ← [] = executa só 1 vez quando página carrega
+    verificarLogin();
+  }, []);
 
 
   useEffect(() => {
@@ -114,6 +113,15 @@ export default function Home() {
           </div>
         </section>
       </main>
+      {isConstructionModalOpen && (
+        <Modal
+          isOpen={isConstructionModalOpen}
+          onClose={() => setIsConstructionModalOpen(false)}
+          title="Aviso"
+          message="Projeto ainda em construção"
+          type="info"
+        />
+      )}
     </div>
   );
 }
