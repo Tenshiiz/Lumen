@@ -6,84 +6,79 @@
   <img src="./public/hero.svg" alt="Lumen" width="100%">
 </a>
 
-<br>
+<br><br>
 
-<img src="https://img.shields.io/badge/Next.js-15.5-111?style=flat-square&logo=nextdotjs&logoColor=fff" alt="Next.js">&nbsp;&nbsp;<img src="https://img.shields.io/badge/React-19.1-111?style=flat-square&logo=react&logoColor=58c4dc" alt="React">&nbsp;&nbsp;<img src="https://img.shields.io/badge/TypeScript-5.x-111?style=flat-square&logo=typescript&logoColor=3178c6" alt="TypeScript">&nbsp;&nbsp;<img src="https://img.shields.io/badge/Tailwind-v4-111?style=flat-square&logo=tailwindcss&logoColor=38bdf8" alt="Tailwind">&nbsp;&nbsp;<img src="https://img.shields.io/badge/Zustand-v5-111?style=flat-square" alt="Zustand">&nbsp;&nbsp;<img src="https://img.shields.io/badge/MIT-111?style=flat-square" alt="License">
+<a href="https://lumen-ashy.vercel.app">
+  <img src="https://img.shields.io/badge/%E2%9C%A8%20Acessar%20o%20Lumen%20%E2%86%92-111111?style=for-the-badge&labelColor=111111" alt="Acessar o Lumen">
+</a>
 
 <br><br>
 
-Plataforma de seleção, análise cromática e exportação de tokens de cor.<br>
-100% offline. Sem cadastro. Sem servidor. Persistência local via <code>localStorage</code>.
-
-<br>
-
-<a href="https://lumen-ashy.vercel.app"><b>Acessar&nbsp;&nbsp;→</b></a>
+<img src="https://img.shields.io/badge/Next.js-15.5-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js">&nbsp;
+<img src="https://img.shields.io/badge/React-19.1-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React">&nbsp;
+<img src="https://img.shields.io/badge/TypeScript-5.x-007ACC?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">&nbsp;
+<img src="https://img.shields.io/badge/Tailwind-v4-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">&nbsp;
+<img src="https://img.shields.io/badge/Zustand-v5-443E38?style=flat-square" alt="Zustand">&nbsp;
+<img src="https://img.shields.io/badge/Testes-38%20passing-4ADE80?style=flat-square" alt="Tests">&nbsp;
+<img src="https://img.shields.io/badge/License-MIT-A78BFA?style=flat-square" alt="License">
 
 <br><br>
-
-</div>
 
 <img src="./public/divider.svg" alt="" width="100%">
 
 <br>
 
-<table>
-<tr>
-<td width="50%" valign="top">
+## 📖 Visão Geral
 
-### Seletor Cromático
-<sub>Disco contínuo de matiz e saturação com faders analógicos de brilho. Controle preciso no espaço HSV sem perdas por arredondamento.</sub>
+Plataforma sensorial de seleção, análise cromática e exportação de tokens de cor.<br>
+Construída para operar **100% no cliente**, sem login, sem servidor e sem dependências de nuvem.<br>
+Toda a coleção e configurações são salvas instantaneamente no seu `localStorage`.
 
-</td>
-<td width="50%" valign="top">
+<br>
 
-### Conversão Universal
-<sub>HEX · RGB · HSL · CMYK — edição direta em qualquer modelo de cor com validação tolerante e cópia instantânea.</sub>
+<img src="./public/divider.svg" alt="" width="100%">
 
-</td>
-</tr>
-<tr>
-<td valign="top">
+<br>
 
-### Contraste WCAG
-<sub>Verificação de acessibilidade em tempo real. Conformidade AA e AAA para texto normal e grande. Acessibilidade antes do deploy.</sub>
+## ✨ Funcionalidades
 
-</td>
-<td valign="top">
-
-### Simulação de Daltonismo
-<sub>Protanopia · Deuteranopia · Tritanopia · Acromatopsia — valide a inclusão visual do seu design.</sub>
-
-</td>
-</tr>
-<tr>
-<td valign="top">
-
-### Harmonias Cromáticas
-<sub>Análoga · Complementar · Dividida · Tríade · Monocromática — geração matemática com um clique.</sub>
-
-</td>
-<td valign="top">
-
-### Paletas e Coleções
-<sub>Crie, renomeie e organize coleções de cores. Histórico de recentes. Persistência local automática.</sub>
-
-</td>
-</tr>
-<tr>
-<td valign="top">
-
-### Exportação de Tokens
-<sub>CSS Variables · Tailwind v4 · JSON W3C DTCG · TypeScript — copie e cole direto no seu código.</sub>
-
-</td>
-<td valign="top">
-
-### Cena Atmosférica
-<sub>Chuva, reflexos de vidro e cidade noturna renderizados via Canvas a 60 fps. A estética é parte do instrumento.</sub>
-
-</td>
-</tr>
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <b>🎨 Seletor Cromático Sensorial</b><br>
+      <sub>Disco contínuo de matiz e saturação com faders analógicos de precisão decimal no espaço HSV.</sub>
+    </td>
+    <td align="center" width="50%">
+      <b>🔄 Conversão Universal</b><br>
+      <sub>Edição direta em HEX, RGB, HSL e CMYK com validação tolerante e cópia com um clique.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>⚖️ Análise de Contraste WCAG</b><br>
+      <sub>Cálculo de conformidade AA e AAA em tempo real para texto normal e grande com simulação visual.</sub>
+    </td>
+    <td align="center">
+      <b>👁️ Simulação de Daltonismo</b><br>
+      <sub>Protanopia, Deuteranopia, Tritanopia e Acromatopsia com imunidade a distorções e NaN.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>🎼 Harmonias Cromáticas</b><br>
+      <sub>Geração matemática de acordes: Análoga, Complementar, Dividida, Tríade e Monocromática.</sub>
+    </td>
+    <td align="center">
+      <b>🗃️ Paletas Locais & Histórico</b><br>
+      <sub>Organizador completo de paletas e histórico de cores recentes salvo localmente.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <b>📦 Exportação de Tokens</b><br>
+      <sub>Exportação instantânea para CSS Variables, Tailwind v4, JSON W3C DTCG e TypeScript.</sub>
+    </td>
+  </tr>
 </table>
 
 <br>
@@ -92,50 +87,35 @@ Plataforma de seleção, análise cromática e exportação de tokens de cor.<br
 
 <br>
 
-<details open>
-<summary><b>&nbsp;&nbsp;Stack</b></summary>
+## 🛠️ Stack de Tecnologia
+
+### Dependências Principais
+
+**Framework Principal:** Next.js (v15.5.0)&nbsp; <img src="https://img.shields.io/badge/-Next.js-000000?logo=nextdotjs&logoColor=white&style=flat-square" alt="Next.js" height="20">
+
+**Biblioteca de UI:** React (v19.1.0)&nbsp; <img src="https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black&style=flat-square" alt="React" height="20">
+
+**Linguagem:** TypeScript (v5.x)&nbsp; <img src="https://img.shields.io/badge/-TypeScript-007ACC?logo=typescript&logoColor=white&style=flat-square" alt="TypeScript" height="20">
+
+**Estilização:** Tailwind CSS (v4)&nbsp; <img src="https://img.shields.io/badge/-Tailwind_CSS-38B2AC?logo=tailwindcss&logoColor=white&style=flat-square" alt="Tailwind CSS" height="20">
+
+**Gerenciamento de Estado:** Zustand (v5)&nbsp; <img src="https://img.shields.io/badge/-Zustand-443E38?logo=react&logoColor=white&style=flat-square" alt="Zustand" height="20">
+
+**Manipulação Cromática:** colord (v2.9.3)&nbsp; <img src="https://img.shields.io/badge/-colord-8A2BE2?style=flat-square" alt="colord" height="20">
 
 <br>
 
-| | |
-|:---|:---|
-| **Framework** | Next.js 15.5 · App Router · Turbopack |
-| **Interface** | React 19.1 |
-| **Linguagem** | TypeScript 5.x · Strict |
-| **Estilização** | Tailwind CSS v4 · `@utility` customizados |
-| **Estado** | Zustand v5 · `persist` · `localStorage` |
-| **Cromática** | colord · A11y · CMYK · Harmonias |
-| **Tipografia** | Figtree · IBM Plex Mono · `next/font` |
-| **Qualidade** | ESLint 9 · 38 testes · 0 warnings |
+### Ferramentas de Desenvolvimento
 
-</details>
+**Build & Compilação:** Next.js com Turbopack&nbsp; <img src="https://img.shields.io/badge/-Turbopack-000000?logo=nextdotjs&logoColor=white&style=flat-square" alt="Turbopack" height="20">
 
-<br>
+**Análise Estática:** ESLint (v9)&nbsp; <img src="https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white&style=flat-square" alt="ESLint" height="20">
 
-<details>
-<summary><b>&nbsp;&nbsp;Instalação</b></summary>
+**Gerenciador de Pacotes:** npm&nbsp; <img src="https://img.shields.io/badge/-npm-CB3837?logo=npm&logoColor=white&style=flat-square" alt="npm" height="20">
 
-<br>
+**Testes Unitários:** tsx Runner (38 testes)&nbsp; <img src="https://img.shields.io/badge/-tsx-3178C6?logo=typescript&logoColor=white&style=flat-square" alt="tsx" height="20">
 
-```bash
-git clone https://github.com/Tenshiiz/lumen.git
-cd lumen
-npm install
-npm run dev
-```
-
-<sub>Requer Node.js 18.17+</sub>
-
-<br>
-
-| Comando | Descrição |
-|:---|:---|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção |
-| `npm run lint` | Análise estática |
-| `npm test` | Suíte de testes unitários |
-
-</details>
+**Deploy:** Vercel&nbsp; <img src="https://img.shields.io/badge/-Vercel-000000?logo=vercel&logoColor=white&style=flat-square" alt="Vercel" height="20">
 
 <br>
 
@@ -143,13 +123,69 @@ npm run dev
 
 <br>
 
-<div align="center">
+## 📊 Estatísticas do Projeto
 
-<sub>Licença [MIT](./LICENSE)</sub>
+<br>
+
+<a href="https://github.com/Tenshiiz/lumen/stargazers">
+  <img src="https://img.shields.io/github/stars/Tenshiiz/lumen?style=flat-square&color=FFC46B" alt="GitHub Stars">
+</a>&nbsp;
+<a href="https://github.com/Tenshiiz/lumen/network/members">
+  <img src="https://img.shields.io/github/forks/Tenshiiz/lumen?style=flat-square&color=A8D6FF" alt="GitHub Forks">
+</a>&nbsp;
+<a href="https://github.com/Tenshiiz/lumen/issues">
+  <img src="https://img.shields.io/github/issues/Tenshiiz/lumen?style=flat-square&color=9CE9CB" alt="GitHub Issues">
+</a>&nbsp;
+<a href="./LICENSE">
+  <img src="https://img.shields.io/github/license/Tenshiiz/lumen?style=flat-square&color=C084FC" alt="License">
+</a>
 
 <br><br>
 
-<samp>Construído com precisão.</samp>
+<img src="./public/divider.svg" alt="" width="100%">
+
+<br>
+
+## 🚀 Como Executar
+
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/Tenshiiz/lumen.git
+cd lumen
+
+# 2. Instalar as dependências
+npm install
+
+# 3. Iniciar o servidor de desenvolvimento
+npm run dev
+```
+
+<sub>Requer Node.js 18.17 ou superior</sub>
+
+<br><br>
+
+<img src="./public/divider.svg" alt="" width="100%">
+
+<br>
+
+## 📄 Licença
+
+Este projeto está licenciado sob a **MIT License**.<br>
+Consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
+
+<br><br>
+
+<img src="./public/divider.svg" alt="" width="100%">
+
+<br>
+
+**Construído com paixão para a comunidade de designers e desenvolvedores web**
+
+<br>
+
+<a href="https://github.com/Tenshiiz">
+  <img src="https://img.shields.io/badge/Made_with_💖_by-Tenshi-FF69B4?style=for-the-badge" alt="Made with love by Tenshi">
+</a>
 
 <br><br>
 
