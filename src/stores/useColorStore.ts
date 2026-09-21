@@ -9,31 +9,26 @@ const normalizarMatiz = (h: number) => ((Math.round(h) % 360) + 360) % 360
 
 interface ColorState {
   /**
-   * Fonte única da verdade: HSV (matiz 0–360, saturação e brilho 0–100).
-   * O HEX é sempre derivado, nunca armazenado. Como a roda e os faders escrevem
-   * aqui direto, matiz e saturação sobrevivem a brilho 0 ou saturação 0, o que
-   * um caminho via HEX destruiria (#000000 volta como matiz 0, saturação 0).
-   *
-   * Os valores podem ser decimais (vindos de um HEX, ver hexParaHsv): quem
-   * exibe arredonda, quem calcula usa o valor cheio.
+   * Representação central da cor no formato HSV (matiz 0–360, saturação e brilho 0–100).
+   * Armazena valores decimais para evitar perda de precisão em conversões bidirecionais.
    */
   hsv: HsvColor
 
-  // Cores que o usuário confirmou, da mais recente para a mais antiga
+  /** Histórico de cores confirmadas em ordem cronológica inversa. */
   recentColors: string[]
 
   setHue: (h: number) => void
   setSaturation: (s: number) => void
   setBrightness: (v: number) => void
   setHueSaturation: (h: number, s: number) => void
-  /** Só para entrada de texto e cores prontas: passa por HEX de propósito. */
+  /** Atualiza o estado a partir de uma string hexadecimal. */
   setFromHex: (hex: string) => void
-  /** Grava a cor atual no histórico. Chamar ao fim de uma ação, não a cada passo dela. */
+  /** Persiste a cor atual no histórico de recentes. */
   commitColor: () => void
 }
 
 export const useColorStore = create<ColorState>((set, get) => ({
-  // ≈ #F0763A: o herói abre com uma cor saturada, não com branco
+  // Cor padrão inicial (#F0763A)
   hsv: { h: 20, s: 76, v: 94 },
   recentColors: [],
 
@@ -59,10 +54,10 @@ export const useColorStore = create<ColorState>((set, get) => ({
   },
 }))
 
-/** HEX derivado do HSV (maiúsculo, com #). */
+/** Hook seletor que retorna a cor ativa em formato hexadecimal maiúsculo. */
 export const useHex = () => useColorStore((estado) => colord(estado.hsv).toHex().toUpperCase())
 
-/** HSL derivado do HSV; o objeto só muda quando o HSV muda. */
+/** Hook seletor que retorna a cor ativa convertida para o formato HSL. */
 export function useHsl(): HslColor {
   const hsv = useColorStore((estado) => estado.hsv)
   return useMemo(() => colord(hsv).toHsl(), [hsv])

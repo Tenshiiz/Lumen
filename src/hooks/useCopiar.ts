@@ -2,9 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useToast } from '@/context/ToastContext'
 
 /**
- * Copia texto para a área de transferência e avisa pelo toast (que é uma região
- * `status`, então leitores de tela anunciam uma vez). `copiado` guarda o rótulo
- * do último item copiado por ~1,6 s, para o botão trocar o ícone.
+ * Copia texto para a área de transferência com feedback temporário e notificação via toast.
  */
 export function useCopiar() {
   const { showToast } = useToast()

@@ -5,16 +5,11 @@ import { useColorStore } from '@/stores/useColorStore'
 import { useCommitAdiado } from '@/hooks/useCommitAdiado'
 
 /**
- * Disco de matiz e saturação: o ângulo é o matiz (0° à direita, sentido
- * horário) e o raio é a saturação, do branco no centro à cor pura na borda.
- * O brilho não é desenhado aqui: a CamadaCor escreve --escurecer e o CSS
- * escurece o disco inteiro, então o que se vê é sempre o que se pega.
- *
- * Só matiz e saturação são escritos por este componente, direto na store. Não
- * existe ida e volta por HEX, então nada se perde em brilho 0.
+ * Roda cromática para seleção de matiz (ângulo polar) e saturação (distância radial).
+ * Os valores de HSV são atualizados diretamente na store global sem perda de precisão.
  */
 function RodaSeletor() {
-  // decimal na store, inteiro na tela e nos passos do teclado
+  // Matiz normalizado em graus inteiros para exibição e controle por teclado
   const h = Math.round(useColorStore((estado) => estado.hsv.h)) % 360
   const sat = useColorStore((estado) => estado.hsv.s)
   const setHue = useColorStore((estado) => estado.setHue)
@@ -27,7 +22,7 @@ function RodaSeletor() {
   const rafRef = useRef<number | null>(null)
   const coordsRef = useRef<{ clientX: number; clientY: number } | null>(null)
 
-  // Teclado não tem "soltar": confirma quando a pessoa para de girar
+  // Agenda a confirmação no histórico após ajustes via teclado
   const { agendar } = useCommitAdiado(commitColor)
 
   useEffect(() => {
@@ -42,9 +37,9 @@ function RodaSeletor() {
     const raio = caixa.width / 2
     const x = clientX - caixa.left - raio
     const y = clientY - caixa.top - raio
-    // y cresce para baixo, então atan2 já dá o sentido horário na tela
+    // Ângulo em graus no sentido horário
     const matiz = (Math.atan2(y, x) * 180) / Math.PI
-    // fora do disco a saturação trava em 100 e o ponteiro segue o ângulo
+    // Saturação normalizada até o raio máximo do disco (0 a 100%)
     const saturacao = Math.min(1, Math.hypot(x, y) / raio) * 100
     return { matiz, saturacao }
   }
@@ -135,7 +130,7 @@ function RodaSeletor() {
     agendar()
   }
 
-  // mesma convenção do disco: ângulo em graus, y para baixo; 50% é o raio
+  // Coordenadas polares para posicionamento percentual do ponteiro no disco
   const rad = (h * Math.PI) / 180
   const distancia = (sat / 100) * 50
 

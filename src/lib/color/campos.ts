@@ -2,7 +2,7 @@ import { colord } from './setup'
 
 export type FormatoCampo = 'hex' | 'rgb' | 'hsl' | 'cmyk'
 
-/** Exemplo válido de cada formato, usado nas mensagens de erro. */
+/** Exemplos de referência para cada formato de cor suportado. */
 export const EXEMPLO_CAMPO: Record<FormatoCampo, string> = {
   hex: '#F0763A',
   rgb: '240, 118, 58',
@@ -13,9 +13,7 @@ export const EXEMPLO_CAMPO: Record<FormatoCampo, string> = {
 const limitar = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 
 /**
- * Extrai os números de um texto com ruído real (prefixos, parênteses, "%", "°",
- * espaços, colagens de terceiros). Só o ponto é separador decimal: a vírgula
- * separa valores, então "240,118,58" são três números e não 240,118.
+ * Extrai valores numéricos de uma string, desconsiderando caracteres textuais e separadores.
  */
 export function numeros(texto: string): number[] {
   return (texto.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number)
@@ -23,7 +21,7 @@ export function numeros(texto: string): number[] {
 
 const paraHex = (cor: Parameters<typeof colord>[0]) => colord(cor).toHex().toUpperCase()
 
-/** "#f0763a", "F0763A", "hex: #fa3", "#FA3" → "#F0763A"; qualquer outra coisa → null. */
+/** Normaliza strings de formatos hexadecimais variados para o formato '#RRGGBB' em maiúsculas. */
 export function hexTolerante(texto: string): string | null {
   const limpo = texto.trim().replace(/^hex\s*:?\s*/i, '').replace(/^#/, '')
   if (!/^(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(limpo)) return null
@@ -44,7 +42,7 @@ export function hslTolerante(texto: string): string | null {
   return paraHex({ h, s: limitar(n[1], 0, 100), l: limitar(n[2], 0, 100) })
 }
 
-/** CMYK em 0–100, a mesma escala que o colord usa em toCmyk(). */
+/** Interpreta valores CMYK na escala 0-100 para formato hexadecimal. */
 export function cmykTolerante(texto: string): string | null {
   const n = numeros(texto)
   if (n.length < 4) return null
@@ -63,7 +61,7 @@ export function interpretarCampo(formato: FormatoCampo, texto: string): string |
   return INTERPRETES[formato](texto)
 }
 
-/** Texto exibido em cada campo para uma cor. */
+/** Formata a cor hexadecimal para exibição textual no formato especificado. */
 export function formatarCampo(hex: string, formato: FormatoCampo): string {
   const cor = colord(hex)
   switch (formato) {

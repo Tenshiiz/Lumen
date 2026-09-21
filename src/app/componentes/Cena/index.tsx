@@ -1,12 +1,8 @@
 import CenaCarregador from './CenaCarregador'
 
 /**
- * Fundo da página: uma cidade à noite vista por uma janela. Esta versão é só a
- * base em CSS (céu, reflexo, vinheta, grão e moldura), que já vem no HTML do
- * servidor: o vidro das lâminas tem o que desfocar antes de qualquer
- * JavaScript rodar, e sem JavaScript ela é a cena inteira. O CenaCarregador
- * traz a cidade em canvas para dentro do .pano depois do primeiro paint; quando
- * ela termina de desenhar, o .pano recebe data-pronto e o gradiente sai.
+ * Cenário de fundo da aplicação, composto por gradientes estáticos em CSS
+ * e camadas dinâmicas em canvas carregadas de forma assíncrona no cliente.
  */
 function Cena() {
   return (

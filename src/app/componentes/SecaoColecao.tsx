@@ -8,7 +8,7 @@ import ListaPaletas from './ListaPaletas'
 export default function SecaoColecao() {
   const [pronto, setPronto] = useState(false)
 
-  // Lê as paletas salvas só depois da montagem (o servidor renderiza vazio)
+  // Reidrata o estado persistido de paletas após a montagem inicial no cliente
   useEffect(() => {
     let vivo = true
     reidratar().then(() => {

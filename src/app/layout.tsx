@@ -29,11 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // As variáveis do next/font ficam no <html>: o :root as referencia em
-    // --letra/--numero, e um filho (body) não é visível a partir do :root.
+    // Variáveis tipográficas injetadas no elemento html raiz
     <html lang="pt-BR" className={`${figtree.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* síncrono: define data-cena antes do primeiro paint e da hidratação, para o blur do vidro não piscar */}
+        {/* Define data-cena síncronamente antes da hidratação para evitar flash visual */}
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_CENA }} />
       </head>
       <body className="antialiased">

@@ -5,7 +5,7 @@ import type { Palette, PaletteColor } from '@/types/palette'
 
 const CHAVE = 'lumen-palettes'
 const VERSAO = 1
-/** Teto por paleta: evita que uma colagem sem fim encha o localStorage. */
+/** Quantidade máxima de cores permitidas por paleta. */
 const CORES_MAX = 64
 
 interface PaletteState {
@@ -22,9 +22,7 @@ interface PaletteState {
 
 type Persistido = Pick<PaletteState, 'palettes' | 'activePaletteId'>
 
-// ─── validação do que vem do disco ───
-// O localStorage é entrada não confiável: outra versão do app, edição manual
-// ou corrupção. Nada aqui lança exceção; o que não presta é descartado.
+// Funções de sanitização e validação de dados persistidos
 
 const ehObjeto = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -80,8 +78,7 @@ function sanearEstado(bruto: unknown): Persistido {
 }
 
 /**
- * Armazenamento que nunca lança e nunca devolve algo inválido: JSON quebrado,
- * `null`, formato de outra versão ou campos com tipo errado voltam como vazio.
+ * Adaptador de armazenamento com sanitização de esquema e tratamento de exceções de leitura.
  */
 const armazenamento: PersistStorage<Persistido> = {
   getItem: (nome) => {
@@ -100,14 +97,14 @@ const armazenamento: PersistStorage<Persistido> = {
     try {
       localStorage.setItem(nome, JSON.stringify(valor))
     } catch {
-      // cota cheia ou armazenamento bloqueado: a sessão continua em memória
+      // Ignora erro caso a cota de armazenamento esteja excedida
     }
   },
   removeItem: (nome) => {
     try {
       localStorage.removeItem(nome)
     } catch {
-      // sem armazenamento disponível: nada a remover
+      // Ignora erro caso o armazenamento local esteja indisponível
     }
   },
 }
@@ -188,13 +185,13 @@ export const usePaletteStore = create<PaletteState>()(
       name: CHAVE,
       version: VERSAO,
       storage: armazenamento,
-      // O servidor renderiza vazio; o cliente reidrata num efeito (ver reidratar)
+      // Desativa hidratação automática no SSR para evitar mismatch de marcação
       skipHydration: true,
       partialize: (state): Persistido => ({
         palettes: state.palettes,
         activePaletteId: state.activePaletteId,
       }),
-      // qualquer versão anterior (ou desconhecida) passa pela mesma limpeza
+      // Sanitiza dados de versões anteriores ou estruturas corrompidas
       migrate: (persistido) => sanearEstado(persistido),
       merge: (persistido, atual) => ({ ...atual, ...sanearEstado(persistido) }),
     },
@@ -202,9 +199,7 @@ export const usePaletteStore = create<PaletteState>()(
 )
 
 /**
- * Lê as paletas salvas. Chamar num `useEffect` (SecaoColecao e SecaoExportar
- * fazem isso): reidratar só depois da montagem evita o descompasso entre o HTML
- * do servidor e o primeiro render do cliente. É idempotente.
+ * Reidrata as paletas salvas a partir do localStorage de forma segura após a montagem do cliente.
  */
 export function reidratar(): Promise<void> {
   return Promise.resolve(usePaletteStore.persist.rehydrate()).catch(() => undefined)

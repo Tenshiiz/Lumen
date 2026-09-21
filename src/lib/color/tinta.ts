@@ -1,13 +1,11 @@
 import { colord } from './setup'
 
-// Espelham --tinta e --tinta-inversa de globals.css. Precisam existir aqui só
-// para calcular contraste em JS; a interface continua lendo os tokens de CSS.
+// Constantes correspondentes aos tokens --tinta e --tinta-inversa para cálculo de contraste
 const TINTA = '#EDEFFB'
 const TINTA_INVERSA = '#0F1230'
 
 /**
- * Qual tinta lê melhor sobre um fundo: decide pela razão de contraste real,
- * e não por um limiar de luminosidade (que erra em amarelos e azuis saturados).
+ * Determina se a variante clara ou escura de texto oferece maior razão de contraste sobre o fundo.
  */
 export function tintaSobre(fundo: string): 'clara' | 'escura' {
   const cor = colord(fundo)

@@ -1,8 +1,5 @@
 /**
- * Níveis de qualidade da cena e a persistência da escolha.
- *
- * O estado deste módulo é só a escolha do usuário (um valor + assinantes); o
- * motor de desenho mantém o seu próprio estado dentro de cada instância.
+ * Gerenciamento e persistência dos níveis de qualidade gráfica da cena.
  */
 export type Qualidade = 'alta' | 'media' | 'baixa' | 'off'
 
@@ -14,7 +11,7 @@ export function ehQualidade(v: unknown): v is Qualidade {
   return v === 'alta' || v === 'media' || v === 'baixa' || v === 'off'
 }
 
-/** Padrão do aparelho: fixa em 'baixa' (perfil leve e otimizado com chuva ativa). */
+/** Retorna o nível de qualidade padrão ('baixa'). */
 export function escolherPadrao(): Qualidade {
   return 'baixa'
 }
@@ -36,18 +33,16 @@ export function gravarSalva(q: Qualidade): void {
   try {
     localStorage.setItem(CHAVE_CENA, q)
   } catch {
-    /* armazenamento bloqueado ou cheio: a escolha vale só nesta sessão */
+    /* Armazenamento local indisponível */
   }
 }
 
 /**
- * JavaScript mínimo, executado de forma síncrona no <head>, que define
- * data-cena antes da hidratação. Sem isso o desfoque do vidro pisca ao trocar
- * do valor padrão do CSS para o nível escolhido.
+ * Script síncrono injetado no cabeçalho HTML para definir data-cena antes da hidratação.
  */
 export const SCRIPT_CENA = `(function(){try{var q=null;try{q=localStorage.getItem('${CHAVE_CENA}')}catch(e){}if(q==='off'){try{localStorage.removeItem('${CHAVE_CENA}')}catch(e){}q='baixa'}else if(q!=='alta'&&q!=='media'&&q!=='baixa'){q='baixa'}document.documentElement.dataset.cena=q}catch(e){}})();`
 
-/* ── escolha atual, observável por useSyncExternalStore ── */
+/* Estado reativo de qualidade observável por useSyncExternalStore */
 
 let atual: Qualidade | null = null
 const assinantes = new Set<() => void>()
@@ -61,9 +56,7 @@ export function qualidadeAtual(): Qualidade {
 }
 
 /**
- * Aplica e avisa quem assina. `persistir: false` vale só nesta sessão: é o caso
- * da redução automática por desempenho, que não é uma escolha da pessoa e não
- * pode prender a cena num nível baixo nas próximas visitas.
+ * Atualiza o nível global de qualidade e notifica os assinantes registrados.
  */
 export function definirQualidadeGlobal(q: Qualidade, { persistir = true } = {}): void {
   atual = q
@@ -71,7 +64,7 @@ export function definirQualidadeGlobal(q: Qualidade, { persistir = true } = {}):
   try {
     document.documentElement.dataset.cena = q
   } catch {
-    /* sem DOM */
+    /* Ambiente sem DOM */
   }
   assinantes.forEach((f) => f())
 }

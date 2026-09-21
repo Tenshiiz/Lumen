@@ -1,11 +1,8 @@
 import { colord, type HsvColor } from './setup'
 
 /**
- * HEX → HSV **sem arredondar**. `colord().toHsv()` devolve inteiros, e HSV
- * inteiro não representa todas as cores: numa amostra de 200 mil cores, 87,7%
- * voltavam diferentes (#B13793 virava #B03792). Com decimais a ida e volta é
- * exata (0 erros na mesma amostra), então quem cola o HEX da marca recebe o
- * mesmo HEX de volta.
+ * Converte cor hexadecimal para HSV preservando valores decimais em ponto flutuante
+ * para garantir conversões bidirecionais sem perda de precisão.
  */
 export function hexParaHsv(hex: string): HsvColor | null {
   const cor = colord(hex)

@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react'
 
-// Traço uniforme de 1.8, cantos arredondados, herda a cor do texto (currentColor).
+// Ícones SVG padronizados com traço de 1.8px e herança de cor via currentColor
 function Icone({ children, ...props }: SVGProps<SVGSVGElement>) {
   return (
     <svg

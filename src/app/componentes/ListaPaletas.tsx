@@ -7,12 +7,11 @@ import { useToast } from '@/context/ToastContext'
 import type { Palette } from '@/types/palette'
 import FitaDeCores from './FitaDeCores'
 
-/** Nome da paleta com edição direta: Enter confirma, Escape volta ao nome salvo. */
+/** Campo de edição do nome da paleta com confirmação por Enter e cancelamento por Escape. */
 function NomeEditavel({ paleta }: { paleta: Palette }) {
   const renomear = usePaletteStore((estado) => estado.renamePalette)
   const [rascunho, setRascunhoEstado] = useState<string | null>(null)
-  // espelho síncrono: Enter/Escape chamam blur() no mesmo evento, e o onBlur
-  // veria o estado antigo do render (renomearia depois de um Escape)
+  // Referência síncrona para evitar leitura de estado desatualizado no evento blur
   const atual = useRef<string | null>(null)
   const exibido = rascunho ?? paleta.name
 
@@ -83,7 +82,7 @@ function LinhaPaleta({ paleta, ativa, hexAtivo }: { paleta: Palette; ativa: bool
     showToast(`Paleta "${paleta.name}" excluída.`, 'info')
   }
 
-  // sair do grupo de ações sem confirmar desfaz o pedido de exclusão
+  // Cancela a confirmação de exclusão ao perder o foco do grupo de ações
   function aoSairDasAcoes(ev: FocusEvent<HTMLDivElement>) {
     if (!ev.currentTarget.contains(ev.relatedTarget)) setConfirmando(false)
   }
@@ -152,10 +151,7 @@ function LinhaPaleta({ paleta, ativa, hexAtivo }: { paleta: Palette; ativa: bool
   )
 }
 
-/**
- * Paletas salvas. `pronto` só fica true depois da reidratação: até lá o estado
- * vazio não é mostrado, para não piscar "nenhuma paleta" com paletas salvas.
- */
+/** Lista as paletas salvas pelo usuário, aguardando a hidratação do cliente. */
 export default function ListaPaletas({ pronto }: { pronto: boolean }) {
   const paletas = usePaletteStore((estado) => estado.palettes)
   const ativaId = usePaletteStore((estado) => estado.activePaletteId)

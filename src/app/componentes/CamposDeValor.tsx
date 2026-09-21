@@ -13,8 +13,7 @@ const CAMPOS: { formato: FormatoCampo; rotulo: string }[] = [
   { formato: 'cmyk', rotulo: 'CMYK' },
 ]
 
-// O rascunho só vale enquanto a cor não mudou por outro caminho (roda, fader,
-// paleta): guarda o HEX sobre o qual a pessoa começou a digitar.
+// Estado temporário de digitação associado ao valor HEX de referência
 interface Rascunho {
   texto: string
   base: string
@@ -58,8 +57,8 @@ function CampoDeValor({ formato, rotulo }: { formato: FormatoCampo; rotulo: stri
     }
   }
 
+  // Contêiner em grid para alinhamento e acessibilidade sem aninhamento de botões no label
   return (
-    /* label, input e botão são irmãos: um botão dentro do label entraria no nome do campo */
     <div className="group relative min-w-0 py-[13px] pb-[15px] px-[clamp(10px,1.4vw,18px)] grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-1.5 [&:not(:first-child)]:before:content-[''] [&:not(:first-child)]:before:absolute [&:not(:first-child)]:before:left-0 [&:not(:first-child)]:before:top-[18%] [&:not(:first-child)]:before:bottom-[18%] [&:not(:first-child)]:before:w-px [&:not(:first-child)]:before:bg-[rgba(var(--tinta-rgb),0.10)] max-[760px]:[&:nth-child(odd)]:before:hidden max-[760px]:[&:nth-child(n+3)]:border-t max-[760px]:[&:nth-child(n+3)]:border-[rgba(var(--tinta-rgb),0.08)]">
       <label
         htmlFor={idInput}

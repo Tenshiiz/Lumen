@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 
 /**
- * Adia a confirmação de uma cor até a pessoa parar de mexer.
- *
- * Mouse e toque confirmam ao soltar (`agora`). Teclado não tem "soltar": cada
- * seta seria uma cor no histórico. `agendar` reinicia um relógio a cada passo e
- * só confirma quando o controle fica parado, ou quando perde o foco.
- * `agora` não faz nada se não houve mudança desde a última confirmação.
+ * Adia a confirmação de alterações de cor com debounce, permitindo execução imediata ao finalizar gestos.
  */
 export function useCommitAdiado(confirmar: () => void, atrasoMs = 700) {
   const relogio = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -30,7 +25,7 @@ export function useCommitAdiado(confirmar: () => void, atrasoMs = 700) {
     relogio.current = setTimeout(agora, atrasoMs)
   }, [agora, atrasoMs])
 
-  // Ao desmontar, não perde uma confirmação pendente
+  // Confirma alterações pendentes antes da desmontagem
   useEffect(() => agora, [agora])
 
   return { agendar, agora }

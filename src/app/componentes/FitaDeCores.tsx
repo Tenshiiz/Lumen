@@ -5,33 +5,30 @@ import { tintaSobre } from '@/lib/color/tinta'
 import { IconeFechar } from './Icones'
 
 interface Props {
-  /** HEX maiúsculo, sem repetidos: o HEX é a chave de cada amostra. */
+  /** Lista de cores em formato hexadecimal único. */
   cores: string[]
-  /** Nome da fita para leitores de tela ("Cores recentes"). */
+  /** Rótulo de acessibilidade da fita. */
   rotulo: string
-  /** Enter, Espaço ou clique numa amostra. Receber foco nunca chama isto. */
+  /** Callback acionado ao selecionar uma cor. */
   aoAplicar: (hex: string) => void
-  /** Se existir, cada amostra ganha um botão de remover (e Delete/Backspace no teclado). */
+  /** Callback opcional acionado ao remover uma cor. */
   aoRemover?: (hex: string, indice: number) => void
-  /** HEX da cor ativa: marca a amostra correspondente. */
+  /** Cor ativa atual para indicação de seleção. */
   atual?: string
 }
 
 /**
- * Fita contínua de amostras com uma única parada de Tab (roving tabindex):
- * setas, Home e End movem o foco; Enter, Espaço e clique aplicam. Mover o foco
- * não muda a cor ativa; só a confirmação muda.
+ * Fita horizontal de amostras de cores com roving tabindex para navegação por teclado.
  */
 export default function FitaDeCores({ cores, rotulo, aoAplicar, aoRemover, atual }: Props) {
-  // O foco de repouso é guardado por HEX, não por posição: aplicar uma cor a
-  // faz subir para o começo da fita, e o foco precisa acompanhá-la.
+  // Rastreia a cor com foco ativo para navegação por teclado
   const [focoHex, setFocoHex] = useState<string | null>(null)
   const botoes = useRef(new Map<string, HTMLButtonElement>())
   const refocar = useRef<string | null>(null)
 
   const alvo = focoHex !== null && cores.includes(focoHex) ? focoHex : (cores[0] ?? null)
 
-  // Se a reordenação soltou o foco (nó movido no DOM), devolve-o à mesma amostra
+  // Restaura o foco na amostra caso a ordem da lista seja alterada
   useEffect(() => {
     const hex = refocar.current
     if (hex === null) return
@@ -48,7 +45,7 @@ export default function FitaDeCores({ cores, rotulo, aoAplicar, aoRemover, atual
 
   function remover(indice: number) {
     if (!aoRemover) return
-    // o foco segue para a vizinha, senão cairia no <body>
+    // Move o foco para a cor adjacente antes da exclusão
     const vizinha = cores[indice + 1] ?? cores[indice - 1]
     if (vizinha !== undefined) {
       setFocoHex(vizinha)

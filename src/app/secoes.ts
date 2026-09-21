@@ -1,7 +1,5 @@
 /**
- * Seções que a navegação (Topo e BarraAtiva) oferece. Cada entrada precisa ter
- * um elemento com esse id na página: uma âncora sem destino é um link morto.
- * A lista cresce conforme as seções passam a existir.
+ * Lista de seções navegáveis da página para os componentes Topo e BarraAtiva.
  */
 export const SECOES = [
   { id: 'seletor', rotulo: 'Seletor' },

@@ -3,7 +3,7 @@
 import { useColorStore, useHex } from '@/stores/useColorStore'
 import FitaDeCores from './FitaDeCores'
 
-/** Cores confirmadas na sessão, da mais recente para a mais antiga. */
+/** Exibe a fita de cores recentes da sessão em ordem cronológica inversa. */
 export default function FitaRecentes() {
   const recentes = useColorStore((estado) => estado.recentColors)
   const setFromHex = useColorStore((estado) => estado.setFromHex)

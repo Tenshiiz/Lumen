@@ -1,16 +1,10 @@
 /**
- * Motor da cena: uma cidade à noite vista através de uma janela com chuva,
- * desenhada em canvas a partir dos tokens do :root.
- *
- * `criarCena` é uma fábrica: todo o estado (luzes, balões, chuva, rAF,
- * dimensões...) vive no closure de cada instância. Nada em escopo de módulo e
- * nenhum listener é registrado no import, então dois mounts do React
- * StrictMode geram duas instâncias independentes e o `destruir()` da primeira
- * desfaz tudo o que ela criou.
+ * Motor gráfico da cena em Canvas 2D.
+ * Gerencia instâncias independentes de simulação climática, iluminação e partículas de chuva.
  */
 import type { Qualidade } from './qualidade'
 
-const M = 32 // margem extra em cada borda: a janela do navegador pode variar sem deixar vazios
+const M = 32 // Margem de segurança para acomodar redimensionamento sem vazios visuais
 const SEMENTE = 20260919
 const QUADROS_MEDIDOS = 90
 const LIMITE_P95_MS = 22
@@ -42,14 +36,14 @@ export interface OpcoesCena {
 
 export interface Cena {
   destruir: () => void
-  /** Redesenha a cena no nível pedido, sem vazar memória. */
+  /** Redesenha a cena na qualidade solicitada. */
   definirQualidade: (q: Qualidade) => void
-  /** Suspende o rAF (ex.: durante o arraste da roda). */
+  /** Suspende temporariamente o requestAnimationFrame. */
   pausar: () => void
   retomar: () => void
 }
 
-/* ── utilitários puros ── */
+/* Funções auxiliares de cálculo de cor e interpolação */
 
 function rgbDe(s: string): [number, number, number] {
   s = String(s).trim()
@@ -83,7 +77,7 @@ function passo(a: number, b: number, x: number): number {
   return x * x * (3 - 2 * x)
 }
 
-/* ruído de valor, para as nuvens */
+/* Ruído procedural (FBM) para geração de nuvens */
 function hash(x: number, y: number, s: number): number {
   const n = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453
   return n - Math.floor(n)
@@ -123,7 +117,7 @@ function p95(v: number[]): number {
   return o[Math.max(0, Math.ceil(o.length * 0.95) - 1)]
 }
 
-/* ── tipos internos ── */
+/* Tipos de entidades internas */
 
 interface Luz { x: number; y: number; c: string }
 interface Balao { x: number; y: number; ph: number }
@@ -154,7 +148,7 @@ export function criarCena(opts: OpcoesCena): Cena {
 
   const reduz = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 
-  /* estado da instância */
+  /* Estado interno da instância */
   let qualidade = opts.qualidade
   let nivel: Nivel | null = qualidade === 'off' ? null : NIVEIS[qualidade]
   const P: Record<string, string> = {}
@@ -347,7 +341,9 @@ export function criarCena(opts: OpcoesCena): Cena {
     if (!ctx) return
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, W, Hh)
-    const Hz = Hh * 0.54
+    const vh = Math.max(300, Hh - 2 * M)
+    const proporcaoHz = vh < 780 ? Math.max(0.42, 0.42 + 0.10 * ((vh - 480) / 300)) : 0.52
+    const Hz = Hh * proporcaoHz
     const g = ctx.createLinearGradient(0, 0, 0, Hh * 0.8)
     g.addColorStop(0, P['ceu-1'])
     g.addColorStop(0.3, P['ceu-2'])
@@ -609,7 +605,7 @@ export function criarCena(opts: OpcoesCena): Cena {
     c.globalCompositeOperation = 'source-over'
   }
 
-  /* ── laço e medição de desempenho ── */
+  /* Ciclo de renderização e monitoramento de desempenho */
 
   function laco(ts: number) {
     if (destruida) return
@@ -638,12 +634,12 @@ export function criarCena(opts: OpcoesCena): Cena {
     cancelAnimationFrame(raf)
     raf = 0
     if (!deveRodar()) return
-    amostras = [] // uma pausa invalida a medição em curso: recomeça do zero
+    amostras = [] // Reinicia medições pendentes
     ultimo = performance.now()
     raf = requestAnimationFrame(laco)
   }
 
-  /* ── montagem ── */
+  /* Dimensionamento e montagem dos canvases */
 
   function liberarCanvases() {
     todos.forEach((c) => { c.width = 0; c.height = 0 })
@@ -657,10 +653,9 @@ export function criarCena(opts: OpcoesCena): Cena {
       return
     }
     const vw = window.innerWidth, vh = window.innerHeight
-    const sw = (window.screen && window.screen.width) || vw, sh = (window.screen && window.screen.height) || vh
-    // a cena cobre a tela inteira, então a janela do navegador pode variar sem deixar vazios
-    W = Math.max(vw, Math.min(sw, 2560)) + 2 * M
-    Hh = Math.max(vh, Math.min(sh, 1440)) + 2 * M
+    // Dimensiona os canvases com base no viewport somado à margem de segurança
+    W = vw + 2 * M
+    Hh = vh + 2 * M
     dpr = Math.min(window.devicePixelRatio || 1, nivel.dprMax, 3200 / W)
     const vivos = nivel.movimento ? todos : todos.filter((c) => c !== cMov)
     if (!nivel.movimento && cMov) {
@@ -696,8 +691,11 @@ export function criarCena(opts: OpcoesCena): Cena {
     tmr = setTimeout(() => {
       tmr = null
       if (destruida || !nivel) return
-      if (window.innerWidth > W - 2 * M || window.innerHeight > Hh - 2 * M) montar()
-    }, 220)
+      const vwAtual = window.innerWidth, vhAtual = window.innerHeight
+      if (Math.abs(vwAtual - (W - 2 * M)) > 20 || Math.abs(vhAtual - (Hh - 2 * M)) > 20) {
+        montar()
+      }
+    }, 200)
   }
 
   function aoMudarVisibilidade() {
@@ -725,7 +723,7 @@ export function criarCena(opts: OpcoesCena): Cena {
       chuva = []
       gotasMov = []
       amostras = []
-      // o Chrome só libera o backing store de um canvas destacado quando o GC roda
+      // Redefine as dimensões dos canvases para liberar buffers de memória
       liberarCanvases()
     },
     definirQualidade(q: Qualidade) {

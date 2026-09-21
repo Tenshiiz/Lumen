@@ -5,14 +5,8 @@ export type TipoVisao = 'protanopia' | 'deuteranopia' | 'tritanopia' | 'acromato
 type Matriz = readonly [number, number, number, number, number, number, number, number, number]
 
 /**
- * Matrizes 3×3 aplicadas em RGB linear, severidade 1,0 (dicromacia completa).
- * Procedência: Machado, Oliveira e Fernandes (2009), "A Physiologically-based
- * Model for Simulation of Color Vision Deficiency". Os números foram conferidos
- * dígito a dígito contra a página dos autores
- * (inf.ufrgs.br/~oliveira/pubs_files/CVD_Simulation/CVD_Simulation.html).
- * Essa página não diz se a matriz vale para RGB linear ou com gama; aplicar em
- * linear é a convenção usual para matrizes de mistura de cor, e é a escolha
- * feita aqui. É uma aproximação: a percepção real varia entre pessoas.
+ * Matrizes de transformação 3×3 em RGB linear para simulação de dicromacia completa.
+ * Baseado no modelo fisiológico de Machado, Oliveira e Fernandes (2009).
  */
 const MATRIZES: Record<Exclude<TipoVisao, 'acromatopsia'>, Matriz> = {
   protanopia: [0.152286, 1.052583, -0.204868, 0.114503, 0.786281, 0.099216, -0.003882, -0.048116, 1.051998],
@@ -32,9 +26,8 @@ const paraSrgb = (linear: number) => {
 }
 
 /**
- * Como a cor é percebida em cada tipo de daltonismo. Sem tipo (`null`),
- * devolve a própria cor, já normalizada em HEX maiúsculo.
- * Acromatopsia: luminância linear (coeficientes BT.709) replicada nos 3 canais.
+ * Simula a percepção da cor informada para cada deficiência visual cromática.
+ * Retorna o valor original em formato hexadecimal maiúsculo quando tipo é null.
  */
 export function simular(hex: string, tipo: TipoVisao | null): string {
   const { r, g, b } = colord(hex).toRgb()

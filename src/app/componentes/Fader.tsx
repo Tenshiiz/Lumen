@@ -9,10 +9,10 @@ interface FaderProps {
   min?: number
   max?: number
   unidade?: string
-  /** Valor CSS de `background` da calha (um linear-gradient). */
+  /** Valor CSS do gradiente do trilho. */
   trilho: string
   onChange: (valor: number) => void
-  /** Chamado quando a pessoa termina de mexer, não a cada passo. */
+  /** Callback executado após a conclusão do ajuste. */
   onCommit: () => void
 }
 

@@ -1,15 +1,14 @@
 import { colord } from './setup'
 import type { HslColor } from 'colord'
 
-// As harmonias por matiz giram o matiz e mantêm saturação e luminosidade; a
-// monocromática só varia a luminosidade.
+// Harmonias geradas por rotação angular de matiz (modo 'h') ou variação de luminosidade (modo 'l')
 
 export type TipoAcorde = 'analoga' | 'complementar' | 'dividida' | 'triade' | 'mono'
 
 export interface DefinicaoAcorde {
   tipo: TipoAcorde
   rotulo: string
-  /** graus de matiz (modo 'h') ou pontos de luminosidade (modo 'l') */
+  /** Graus de matiz (modo 'h') ou pontos percentuais de luminosidade (modo 'l') */
   passos: number[]
   modo: 'h' | 'l'
   descricao: string
@@ -62,9 +61,10 @@ const LUMINOSIDADE_MIN = 6
 const LUMINOSIDADE_MAX = 94
 
 /**
- * Cores de uma harmonia como HEX maiúsculo. Se `hexBase` for informado, o passo
- * 0 das harmonias por matiz devolve exatamente ele (o HSL arredondado não
- * reproduz o HEX ativo bit a bit).
+ * Gera as cores de uma harmonia cromática em formato hexadecimal maiúsculo.
+ * @param hsl Cor base em formato HSL.
+ * @param tipo Modelo de harmonia cromática.
+ * @param hexBase Cor hexadecimal original opcional para preservar fidelidade do valor de referência.
  */
 export function gerarAcorde(hsl: HslColor, tipo: TipoAcorde, hexBase?: string): string[] {
   const def = ACORDES.find((a) => a.tipo === tipo)

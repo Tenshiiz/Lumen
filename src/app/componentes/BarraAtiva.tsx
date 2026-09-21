@@ -8,9 +8,7 @@ import { IDS_SECOES, SECOES } from '../secoes'
 import { IconeCheck, IconeCopiar, IconeSeta } from './Icones'
 
 /**
- * Barra fixa que aparece quando o herói sai de vista e leva a cor ativa junto,
- * então o seletor não precisa ficar na tela durante a rolagem. É a única
- * superfície com desfoque sempre visível, de propósito.
+ * Barra de navegação e atalho da cor ativa, exibida quando a seção inicial sai da viewport.
  */
 function BarraAtiva() {
   const hex = useHex()
@@ -18,7 +16,7 @@ function BarraAtiva() {
   const visivel = useSaiuDeVista('inicio')
   const ativa = useSecaoAtiva(IDS_SECOES)
 
-  // Fecha o menu do celular depois de escolher uma seção
+  // Fecha o menu mobile após a seleção de uma seção
   const fecharMenu = (ev: MouseEvent<HTMLAnchorElement>) =>
     ev.currentTarget.closest('details')?.removeAttribute('open')
 

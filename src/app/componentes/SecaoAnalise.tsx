@@ -11,7 +11,7 @@ interface DefinicaoAba {
   componente: ComponentType
 }
 
-// Adicionar uma aba (Escalas, Nomes) é acrescentar uma linha aqui.
+// Configuração das abas disponíveis na seção de análise
 const ABAS: DefinicaoAba[] = [
   { chave: 'harmonias', rotulo: 'Harmonias', componente: PainelHarmonias },
   { chave: 'contraste', rotulo: 'Contraste', componente: PainelContraste },

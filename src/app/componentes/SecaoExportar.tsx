@@ -33,7 +33,7 @@ export default function SecaoExportar() {
 
   const [formato, setFormato] = useState<Formato>('css')
   const [incluirAtiva, setIncluirAtiva] = useState(true)
-  // Só guarda o que a pessoa mexeu; o resto segue a paleta ativa (marcada por padrão)
+  // Armazena a seleção manual de paletas para inclusão no arquivo de exportação
   const [alterados, setAlterados] = useState<Record<string, boolean>>({})
 
   useEffect(() => {

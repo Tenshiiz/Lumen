@@ -14,10 +14,7 @@ import {
 const MAIS_LEVE: Partial<Record<Qualidade, Qualidade>> = { alta: 'media', media: 'baixa' }
 
 /**
- * Os três canvases da cidade e o motor que os desenha. Vive dentro do `.pano`
- * (que já traz o céu em CSS) e só monta depois do primeiro paint; ver
- * CenaCarregador. Cada mudança de nível destrói a instância anterior e cria
- * outra, para que nenhum backing store fique para trás.
+ * Gerencia a renderização dos canvases da cena de fundo e responde a mudanças de qualidade.
  */
 export default function CenaCanvas() {
   const qualidade = useSyncExternalStore(assinarQualidade, qualidadeAtual, qualidadeServidor)
@@ -43,7 +40,7 @@ export default function CenaCanvas() {
       aoDegradar: () => {
         const proximo = MAIS_LEVE[qualidade]
         if (!proximo) return
-        // só nesta sessão: a redução automática não é uma escolha salva
+        // Degradação automática restrita à sessão atual para preservar taxa de quadros
         definirQualidadeGlobal(proximo, { persistir: false })
         avisar.current('Cena reduzida para manter a fluidez.', 'info')
       },
@@ -56,7 +53,7 @@ export default function CenaCanvas() {
     }
   }, [qualidade])
 
-  // a chuva para enquanto a roda é arrastada: o gesto precisa de todo o quadro
+  // Pausa animações durante a manipulação da roda para poupar processamento
   useEffect(() => {
     let arrastando = false
     const aoPressionar = (e: PointerEvent) => {

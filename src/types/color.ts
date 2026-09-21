@@ -1,4 +1,4 @@
 export type { HslColor, RgbColor } from 'colord'
 
-// Formato de exibição dos inputs de cor
+/** Formatos de representação cromática suportados pelos campos de entrada. */
 export type ColorFormat = 'hex' | 'rgb' | 'hsl' | 'cmyk'

@@ -9,7 +9,7 @@ import { IconeCheck, IconeCopiar } from './Icones'
 
 function Seletor() {
   const hex = useHex()
-  // a store guarda decimais (para o HEX voltar exato); a tela mostra inteiros
+  // Arredonda os valores HSV da store para exibição inteira na interface
   const h = Math.round(useColorStore((estado) => estado.hsv.h))
   const sat = Math.round(useColorStore((estado) => estado.hsv.s))
   const v = Math.round(useColorStore((estado) => estado.hsv.v))
@@ -19,13 +19,16 @@ function Seletor() {
   const { copiar, copiado } = useCopiar()
 
   return (
-    <div className="peitoril" id="seletor">
-      {/* o disco fica de pé sobre a pedra: por isso é irmão do tampo, não filho */}
-      <div className="peitoril-disco">
-        <RodaSeletor />
+    <div id="seletor" className="flex-1 flex flex-col justify-between relative">
+      {/* Vão da janela: centralização vertical do disco seletor */}
+      <div className="flex-1 flex items-center justify-center relative z-10 min-h-[160px] py-3 px-4">
+        <div className="peitoril-disco">
+          <RodaSeletor />
+        </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-[clamp(20px,5vw,64px)] pb-[clamp(24px,3.6vh,42px)] grid grid-cols-1 max-[900px]:justify-stretch min-[901px]:grid-cols-[auto_minmax(260px,500px)] min-[901px]:justify-between items-end gap-x-[clamp(30px,6vw,90px)] gap-y-[clamp(20px,3vh,34px)]">
+      <div className="peitoril">
+        <div className="max-w-[1280px] mx-auto px-[clamp(20px,5vw,64px)] pb-[clamp(24px,3.6vh,42px)] grid grid-cols-1 max-[900px]:justify-stretch min-[901px]:grid-cols-[auto_minmax(260px,500px)] min-[901px]:justify-between items-end gap-x-[clamp(30px,6vw,90px)] gap-y-[clamp(20px,3vh,34px)]">
         <div className="min-w-0">
           <span className="inline-block font-mono font-normal text-[clamp(38px,4.8vw,66px)] tracking-[-0.035em] leading-none tabular-nums text-[var(--tinta)] pb-[11px] border-b-[3px] border-[var(--cor-atual)] transition-[border-color] duration-[var(--t-curto)] ease-[var(--ease)]">
             {hex}
@@ -62,6 +65,7 @@ function Seletor() {
       </div>
 
       <CamposDeValor />
+      </div>
     </div>
   )
 }

@@ -24,7 +24,7 @@ export default function PainelContraste() {
   const [entrada, setEntrada] = useState(EXEMPLO)
 
   const fundo = hexTolerante(entrada)
-  // colord trunca a razão em 2 casas: o valor exibido nunca supera o real
+  // Razão de contraste WCAG calculada entre a cor ativa e a cor de fundo
   const razao = fundo ? colord(texto).contrast(fundo) : null
 
   function inverter() {
