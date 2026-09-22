@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumen — Módulo 1: Extrator de Imagem Sensorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fundo: #08090d;
+      --fundo-elevado: #111319;
+      --vidro-base: rgba(16, 18, 25, 0.75);
+      --vidro-borda: rgba(230, 225, 216, 0.08);
+      --vidro-luz: inset 0 1px 0 rgba(255, 225, 190, 0.12);
+      --tinta: #e8e3da;
+      --tinta-media: #9a9790;
+      --tinta-fraca: #63615c;
+      --luz-quente: #e59a3c;
+      --cor-ativa: #e59a3c;
+      --cor-mira: #e59a3c;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--tinta);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    /* Luz de fundo acolhedora */
+    .luz-ambiente {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85vw;
+      height: 75vh;
+      background: radial-gradient(circle, rgba(229, 154, 60, 0.06) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+      transition: background 400ms var(--ease);
+    }
+
+    /* Cartão Principal do Módulo */
+    .modulo-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 960px;
+      background: var(--vidro-base);
+      backdrop-filter: blur(32px);
+      border: 1px solid var(--vidro-borda);
+      box-shadow: var(--vidro-luz), 0 32px 64px -20px rgba(0, 0, 0, 0.9);
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Cabeçalho do Módulo */
+    .modulo-topo {
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(230, 225, 216, 0.06);
+    }
+
+    .modulo-titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--tinta);
+    }
+
+    .marca-ponto {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--cor-ativa);
+      box-shadow: 0 0 12px var(--cor-ativa);
+      transition: background 300ms ease, box-shadow 300ms ease;
+    }
+
+    .topo-botoes {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-acao {
+      background: rgba(230, 225, 216, 0.06);
+      border: 1px solid var(--vidro-borda);
+      color: var(--tinta-media);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 200ms var(--ease);
+      box-shadow: var(--vidro-luz);
+    }
+
+    .btn-acao:hover {
+      color: var(--tinta);
+      background: rgba(230, 225, 216, 0.11);
+    }
+
+    /* Mesa de Trabalho Visual (Viewport da Imagem) */
+    .mesa-viewport {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      background: #040508;
+      overflow: hidden;
+      cursor: crosshair;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mesa-viewport.modo-pan {
+      cursor: grab;
+    }
+
+    .mesa-viewport.arrastando-pan {
+      cursor: grabbing;
+    }
+
+    /* Canvas Interativo */
+    #canvasPrincipal {
+      transform-origin: center center;
+      transition: transform 60ms linear;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Lupa de Joalheiro (Magnifier 10x com Relevo Óptico) */
+    .lupa-joalheiro {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      box-shadow:
+        inset 0 0 0 2px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        0 16px 32px rgba(0, 0, 0, 0.95);
+      pointer-events: none;
+      display: none;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+      background: #000;
+      z-index: 50;
+    }
+
+    /* Retículo em cruz suave */
+    .lupa-joalheiro::before, .lupa-joalheiro::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.65);
+      pointer-events: none;
+    }
+
+    .lupa-joalheiro::before {
+      top: 50%;
+      left: calc(50% - 12px);
+      width: 24px;
+      height: 1px;
+    }
+
+    .lupa-joalheiro::after {
+      top: calc(50% - 12px);
+      left: 50%;
+      width: 1px;
+      height: 24px;
+    }
+
+    .lupa-tag {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: rgba(8, 9, 13, 0.9);
+      color: var(--tinta);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .lupa-tag-cor {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cor-mira);
+    }
+
+    /* Efeito de Pulso Luminoso ao Pinçar */
+    .onda-choque {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      pointer-events: none;
+      border: 2px solid #ffffff;
+      transform: translate(-50%, -50%) scale(1);
+      animation: expandirOnda 500ms var(--ease) forwards;
+      z-index: 40;
+    }
+
+    @keyframes expandirOnda {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(8);
+        opacity: 0;
+      }
+    }
+
+    /* Faixa de Pré-Visualização Comparativa (Split Bar) */
+    .faixa-preview {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      background: rgba(12, 14, 20, 0.95);
+      border-top: 1px solid rgba(230, 225, 216, 0.08);
+      padding: 0 20px;
+      gap: 16px;
+    }
+
+    .preview-bloco {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .preview-amostra {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .preview-label {
+      color: var(--tinta-fraca);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .preview-hex {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--tinta);
+    }
+
+    .divisor-vertical {
+      width: 1px;
+      height: 20px;
+      background: rgba(230, 225, 216, 0.1);
+    }
+
+    /* Fita Contínua de Cores Dominantes (Fita de Tecido) */
+    .fita-dominantes-container {
+      padding: 18px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(9, 10, 15, 0.6);
+      border-top: 1px solid rgba(230, 225, 216, 0.05);
+    }
+
+    .fita-rotulo {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      color: var(--tinta-media);
+    }
+
+    .fita-tecido {
+      display: flex;
+      height: 42px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .stop-tecido {
+      flex: 1;
+      height: 100%;
+      cursor: pointer;
+      position: relative;
+      transition: flex 200ms var(--ease), transform 150ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stop-tecido:hover {
+      flex: 1.8;
+      z-index: 2;
+    }
+
+    .stop-tecido span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #ffffff;
+      opacity: 0;
+      transition: opacity 150ms ease;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .stop-tecido:hover span {
+      opacity: 1;
+    }
+
+    /* Rodapé com Dicas de Atalho */
+    .modulo-rodape {
+      padding: 12px 24px;
+      background: rgba(6, 7, 10, 0.7);
+      border-top: 1px solid rgba(230, 225, 216, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--tinta-fraca);
+    }
+
+    .atalhos-guia {
+      display: flex;
+      gap: 16px;
+    }
+
+    .atalho-tag {
+      color: var(--tinta-media);
+      background: rgba(230, 225, 216, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(230, 225, 216, 0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="luz-ambiente" id="luzAmbiente"></div>
+
+  <div class="modulo-container">
+    
+    <!-- Cabeçalho -->
+    <header class="modulo-topo">
+      <div class="modulo-titulo">
+        <div class="marca-ponto" id="pontoAtivo"></div>
+        Extrator de Imagem de Alta Precisão
+      </div>
+      <div class="topo-botoes">
+        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        <button type="button" class="btn-acao" onclick="document.getElementById('fileInput').click()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Carregar Imagem
+        </button>
+        <button type="button" class="btn-acao" id="btnResetarVista">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          100% Zoom
+        </button>
+      </div>
+    </header>
+
+    <!-- Mesa de Trabalho com Pan/Zoom e Lupa -->
+    <div class="mesa-viewport" id="mesaViewport">
+      <canvas id="canvasPrincipal"></canvas>
+
+      <!-- Lupa de Joalheiro -->
+      <div class="lupa-joalheiro" id="lupaJoalheiro">
+        <canvas id="canvasLupa" width="110" height="110"></canvas>
+        <div class="lupa-tag">
+          <div class="lupa-tag-cor" id="tagCorMira"></div>
+          <span id="txtHexMira">#000000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Faixa de Pré-Visualização (Comparativo) -->
+    <div class="faixa-preview">
+      <div class="preview-bloco">
+        <div class="preview-amostra" id="amostraAtiva" style="background:var(--cor-ativa)"></div>
+        <div>
+          <div class="preview-label">Cor Ativa (Fixada)</div>
+          <div class="preview-hex" id="hexAtivo">#E59A3C</div>
+        </div>
+      </div>
+
+      <div class="divisor-vertical"></div>
+
+      <div class="preview-bloco">
+        <div class="preview-amostra" id="amostraMira" style="background:var(--cor-mira)"></div>
+        <div>
+          <div class="preview-label">Sob a Mira (Preview)</div>
+          <div class="preview-hex" id="hexMira">#E59A3C</div>
+        </div>
+      </div>
+
+      <div style="margin-left:auto; font-size:12px; color:var(--tinta-fraca); font-family:'JetBrains Mono'">
+        Clique no pixel para fixar
+      </div>
+    </div>
+
+    <!-- Fita Contínua de Cores Dominantes (Fita de Tecido) -->
+    <div class="fita-dominantes-container">
+      <div class="fita-rotulo">
+        <span>Tons Dominantes (Extração em Fita Contínua)</span>
+        <span style="color:var(--tinta-fraca)">Clique para aplicar</span>
+      </div>
+      <div class="fita-tecido" id="fitaTecido">
+        <!-- Gerado via JS -->
+      </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="modulo-rodape">
+      <div class="atalhos-guia">
+        <span><span class="atalho-tag">Ctrl + V</span> Colar print</span>
+        <span><span class="atalho-tag">Espaço + Arrastar</span> Pan</span>
+        <span><span class="atalho-tag">Scroll</span> Zoom</span>
+        <span><span class="atalho-tag">Clique</span> Pinçar cor</span>
+      </div>
+      <div id="statusZoom">Zoom: 100%</div>
+    </footer>
+
+  </div>
+
+  <script>
+    // --- ESTADO DO MÓDULO ---
+    const estado = {
+      corAtiva: '#E59A3C',
+      corMira: '#E59A3C',
+      zoom: 1.0,
+      panX: 0,
+      panY: 0,
+      isPanning: false,
+      startPanX: 0,
+      startPanY: 0,
+      modoEspaco: false,
+      imgOriginal: null,
+      dominantes: ['#1A102F', '#79284D', '#E05A47', '#F6AD55', '#E59A3C', '#234E52']
+    };
+
+    // Elementos DOM
+    const mesaViewport = document.getElementById('mesaViewport');
+    const canvasPrincipal = document.getElementById('canvasPrincipal');
+    const ctxPrincipal = canvasPrincipal.getContext('2d', { willReadFrequently: true });
+    const lupaJoalheiro = document.getElementById('lupaJoalheiro');
+    const canvasLupa = document.getElementById('canvasLupa');
+    const ctxLupa = canvasLupa.getContext('2d');
+    const txtHexMira = document.getElementById('txtHexMira');
+    const tagCorMira = document.getElementById('tagCorMira');
+    const hexAtivo = document.getElementById('hexAtivo');
+    const hexMira = document.getElementById('hexMira');
+    const amostraAtiva = document.getElementById('amostraAtiva');
+    const amostraMira = document.getElementById('amostraMira');
+    const pontoAtivo = document.getElementById('pontoAtivo');
+    const luzAmbiente = document.getElementById('luzAmbiente');
+    const fitaTecido = document.getElementById('fitaTecido');
+    const statusZoom = document.getElementById('statusZoom');
+    const fileInput = document.getElementById('fileInput');
+    const btnResetarVista = document.getElementById('btnResetarVista');
+
+    // --- FUNÇÕES DE COR ---
+    function rgbParaHex(r, g, b) {
+      return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+    }
+
+    function atualizarCorAtiva(novoHex) {
+      estado.corAtiva = novoHex;
+      hexAtivo.textContent = novoHex;
+      amostraAtiva.style.backgroundColor = novoHex;
+      pontoAtivo.style.backgroundColor = novoHex;
+      pontoAtivo.style.boxShadow = `0 0 12px ${novoHex}`;
+      luzAmbiente.style.background = `radial-gradient(circle, ${novoHex}14 0%, transparent 65%)`;
+      document.documentElement.style.setProperty('--cor-ativa', novoHex);
+    }
+
+    function atualizarCorMira(novoHex) {
+      estado.corMira = novoHex;
+      hexMira.textContent = novoHex;
+      amostraMira.style.backgroundColor = novoHex;
+      txtHexMira.textContent = novoHex;
+      tagCorMira.style.backgroundColor = novoHex;
+    }
+
+    // --- TRANSFORMAÇÃO E RENDERIZAÇÃO DA MESA (PAN & ZOOM) ---
+    function atualizarTransformacao() {
+      canvasPrincipal.style.transform = `translate(${estado.panX}px, ${estado.panY}px) scale(${estado.zoom})`;
+      statusZoom.textContent = `Zoom: ${Math.round(estado.zoom * 100)}%`;
+    }
+
+    btnResetarVista.addEventListener('click', () => {
+      estado.zoom = 1.0;
+      estado.panX = 0;
+      estado.panY = 0;
+      atualizarTransformacao();
+    });
+
+    // Zoom via Scroll
+    mesaViewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      const novoZoom = Math.min(4.0, Math.max(0.5, estado.zoom * zoomFactor));
+      estado.zoom = novoZoom;
+      atualizarTransformacao();
+    });
+
+    // Pan com Espaço + Arrastar
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && !estado.modoEspaco) {
+        estado.modoEspaco = true;
+        mesaViewport.classList.add('modo-pan');
+        lupaJoalheiro.style.display = 'none';
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'Space') {
+        estado.modoEspaco = false;
+        estado.isPanning = false;
+        mesaViewport.classList.remove('modo-pan', 'arrastando-pan');
+      }
+    });
+
+    mesaViewport.addEventListener('mousedown', (e) => {
+      if (estado.modoEspaco || e.button === 1) {
+        estado.isPanning = true;
+        estado.startPanX = e.clientX - estado.panX;
+        estado.startPanY = e.clientY - estado.panY;
+        mesaViewport.classList.add('arrastando-pan');
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (estado.isPanning) {
+        estado.panX = e.clientX - estado.startPanX;
+        estado.panY = e.clientY - estado.startPanY;
+        atualizarTransformacao();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (estado.isPanning) {
+        estado.isPanning = false;
+        mesaViewport.classList.remove('arrastando-pan');
+      }
+    });
+
+    // --- LUPA DE JOALHEIRO (MAGNIFIER 10X PIXEL-A-PIXEL) ---
+    mesaViewport.addEventListener('mouseenter', () => {
+      if (!estado.modoEspaco && estado.imgOriginal) lupaJoalheiro.style.display = 'block';
+    });
+
+    mesaViewport.addEventListener('mouseleave', () => {
+      lupaJoalheiro.style.display = 'none';
+    });
+
+    mesaViewport.addEventListener('mousemove', (e) => {
+      if (estado.modoEspaco || estado.isPanning || !estado.imgOriginal) {
+        lupaJoalheiro.style.display = 'none';
+        return;
+      }
+
+      const vpRect = mesaViewport.getBoundingClientRect();
+      const canvasRect = canvasPrincipal.getBoundingClientRect();
+
+      // Posição da lupa no viewport
+      const mouseVpX = e.clientX - vpRect.left;
+      const mouseVpY = e.clientY - vpRect.top;
+      lupaJoalheiro.style.display = 'block';
+      lupaJoalheiro.style.left = `${mouseVpX}px`;
+      lupaJoalheiro.style.top = `${mouseVpY}px`;
+
+      // Coordenadas relativas ao canvas transformado
+      const mouseCanvasX = (e.clientX - canvasRect.left) / estado.zoom;
+      const mouseCanvasY = (e.clientY - canvasRect.top) / estado.zoom;
+
+      // Escala para a resolução real da imagem no buffer
+      const scaleX = canvasPrincipal.width / (canvasRect.width / estado.zoom);
+      const scaleY = canvasPrincipal.height / (canvasRect.height / estado.zoom);
+      const imgX = Math.floor(mouseCanvasX * scaleX);
+      const imgY = Math.floor(mouseCanvasY * scaleY);
+
+      if (imgX < 0 || imgY < 0 || imgX >= canvasPrincipal.width || imgY >= canvasPrincipal.height) {
+        lupaJoalheiro.style.display = 'none';
+        return;
+      }
+
+      // Desenha na lupa com zoom 10x sem interpolação borrada
+      ctxLupa.imageSmoothingEnabled = false;
+      ctxLupa.clearRect(0, 0, 110, 110);
+      ctxLupa.drawImage(canvasPrincipal, imgX - 5, imgY - 5, 11, 11, 0, 0, 110, 110);
+
+      // Lê a cor do pixel central
+      const p = ctxPrincipal.getImageData(imgX, imgY, 1, 1).data;
+      const hexSobMira = rgbParaHex(p[0], p[1], p[2]);
+      atualizarCorMira(hexSobMira);
+    });
+
+    // Clique = Pinçar e Fixar a Cor com Onda de Choque
+    mesaViewport.addEventListener('click', (e) => {
+      if (estado.modoEspaco || estado.isPanning || !estado.imgOriginal) return;
+
+      const vpRect = mesaViewport.getBoundingClientRect();
+      const clickX = e.clientX - vpRect.left;
+      const clickY = e.clientY - vpRect.top;
+
+      // Efeito de onda de choque luminosa
+      const onda = document.createElement('div');
+      onda.className = 'onda-choque';
+      onda.style.left = `${clickX}px`;
+      onda.style.top = `${clickY}px`;
+      onda.style.borderColor = estado.corMira;
+      mesaViewport.appendChild(onda);
+      setTimeout(() => onda.remove(), 500);
+
+      // Aplica a cor definitivamente
+      atualizarCorAtiva(estado.corMira);
+    });
+
+    // --- CARREGAMENTO DE IMAGEM & EXTRAÇÃO DE DOMINANTES ---
+    function carregarImagem(img) {
+      estado.imgOriginal = img;
+      
+      // Ajusta proporção segura no viewport de 500px de altura
+      const proporcao = img.width / img.height;
+      let targetW = 750;
+      let targetH = 750 / proporcao;
+      if (targetH > 440) {
+        targetH = 440;
+        targetW = targetH * proporcao;
+      }
+
+      canvasPrincipal.width = img.naturalWidth || img.width;
+      canvasPrincipal.height = img.naturalHeight || img.height;
+      canvasPrincipal.style.width = `${targetW}px`;
+      canvasPrincipal.style.height = `${targetH}px`;
+
+      ctxPrincipal.drawImage(img, 0, 0);
+      estado.zoom = 1.0;
+      estado.panX = 0;
+      estado.panY = 0;
+      atualizarTransformacao();
+
+      extrairDominantesFita();
+    }
+
+    function processarArquivo(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => carregarImagem(img);
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processarArquivo(e.target.files[0]);
+      }
+    });
+
+    // Suporte Universal a Ctrl + V
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      for (let item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          processarArquivo(item.getAsFile());
+          break;
+        }
+      }
+    });
+
+    // Drag and Drop
+    window.addEventListener('dragover', (e) => e.preventDefault());
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processarArquivo(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Extração das 6 cores dominantes (Fita de Tecido)
+    function extrairDominantesFita() {
+      const w = canvasPrincipal.width;
+      const h = canvasPrincipal.height;
+      const amostras = [];
+      const passoX = Math.max(1, Math.floor(w / 16));
+      const passoY = Math.max(1, Math.floor(h / 16));
+
+      for (let y = 0; y < h; y += passoY) {
+        for (let x = 0; x < w; x += passoX) {
+          const p = ctxPrincipal.getImageData(x, y, 1, 1).data;
+          const soma = p[0] + p[1] + p[2];
+          if (soma > 50 && soma < 700) {
+            amostras.push(rgbParaHex(p[0], p[1], p[2]));
+          }
+        }
+      }
+
+      const unicos = [...new Set(amostras)].slice(0, 6);
+      if (unicos.length < 6) {
+        unicos.push(...estado.dominantes.slice(0, 6 - unicos.length));
+      }
+
+      fitaTecido.innerHTML = '';
+      unicos.forEach(hex => {
+        const stop = document.createElement('div');
+        stop.className = 'stop-tecido';
+        stop.style.backgroundColor = hex;
+        stop.title = `Aplicar ${hex}`;
+        stop.innerHTML = `<span>${hex}</span>`;
+        stop.onclick = () => atualizarCorAtiva(hex);
+        stop.onmouseenter = () => atualizarCorMira(hex);
+        fitaTecido.appendChild(stop);
+      });
+    }
+
+    // Geração de Imagem Padrão de Alta Resolução (Pôr do sol cinematográfico)
+    function gerarDemoCinematografica() {
+      const demoCanvas = document.createElement('canvas');
+      demoCanvas.width = 1200;
+      demoCanvas.height = 700;
+      const g = demoCanvas.getContext('2d');
+
+      // Céu crepúsculo
+      const grad = g.createLinearGradient(0, 0, 1200, 700);
+      grad.addColorStop(0, '#100b1a');
+      grad.addColorStop(0.25, '#351630');
+      grad.addColorStop(0.5, '#7f2a48');
+      grad.addColorStop(0.72, '#cf5238');
+      grad.addColorStop(0.88, '#e59a3c');
+      grad.addColorStop(1, '#1b3238');
+      g.fillStyle = grad;
+      g.fillRect(0, 0, 1200, 700);
+
+      // Sol poente difuso
+      g.beginPath();
+      g.arc(820, 420, 120, 0, Math.PI * 2);
+      g.fillStyle = 'rgba(255, 240, 210, 0.95)';
+      g.shadowColor = '#e59a3c';
+      g.shadowBlur = 80;
+      g.fill();
+
+      // Montanhas silhuetadas
+      g.shadowBlur = 0;
+      g.beginPath();
+      g.moveTo(0, 700);
+      g.lineTo(0, 480);
+      g.lineTo(320, 360);
+      g.lineTo(620, 460);
+      g.lineTo(950, 380);
+      g.lineTo(1200, 490);
+      g.lineTo(1200, 700);
+      g.closePath();
+      g.fillStyle = '#0a0d13';
+      g.fill();
+
+      carregarImagem(demoCanvas);
+    }
+
+    // Inicialização
+    atualizarCorAtiva(estado.corAtiva);
+    gerarDemoCinematografica();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumen — Protótipo do Ateliê Integrado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fundo: #090a0f;
+      --fundo-elevado: #11131a;
+      --vidro-base: rgba(18, 20, 28, 0.72);
+      --vidro-borda: rgba(230, 225, 216, 0.08);
+      --vidro-luz: inset 0 1px 0 rgba(255, 235, 210, 0.12);
+      --tinta: #e8e3da;
+      --tinta-media: #9a9790;
+      --tinta-fraca: #656460;
+      --luz-quente: #e59a3c;
+      --luz-ambar: #c97528;
+      --cor-ativa: #e59a3c;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --t-suave: 450ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--tinta);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Brilho focal de ambiente (Luz dissipada) */
+    .luz-focal {
+      position: fixed;
+      top: -20vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 80vh;
+      background: radial-gradient(circle at 50% 30%, rgba(229, 154, 60, 0.09) 0%, rgba(201, 117, 40, 0.03) 45%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+      transition: background var(--t-suave) var(--ease);
+    }
+
+    /* Topo de navegação */
+    header {
+      position: relative;
+      z-index: 20;
+      padding: 22px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(230, 225, 216, 0.05);
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--tinta);
+      text-decoration: none;
+    }
+
+    .marca-ponto {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--cor-ativa), var(--luz-ambar) 70%, transparent 90%);
+      box-shadow: 0 0 16px var(--cor-ativa);
+      transition: background var(--t-suave) var(--ease), box-shadow var(--t-suave) var(--ease);
+    }
+
+    .topo-acoes {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-toggle-painel {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(230, 225, 216, 0.06);
+      border: 1px solid var(--vidro-borda);
+      color: var(--tinta-media);
+      cursor: pointer;
+      transition: all 250ms var(--ease);
+      box-shadow: var(--vidro-luz);
+    }
+
+    .btn-toggle-painel:hover {
+      color: var(--tinta);
+      background: rgba(230, 225, 216, 0.11);
+    }
+
+    .btn-toggle-painel.ativo {
+      color: var(--tinta);
+      background: rgba(229, 154, 60, 0.15);
+      border-color: rgba(229, 154, 60, 0.35);
+    }
+
+    /* Palco do Ateliê (Bi-coluna orgânica com transição) */
+    main {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .estudio-container {
+      width: 100%;
+      max-width: 1400px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: center;
+      transition: all var(--t-suave) var(--ease);
+    }
+
+    .estudio-container.com-painel {
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    /* Coluna Esquerda: O Núcleo do Santuário */
+    .coluna-nucleo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all var(--t-suave) var(--ease);
+    }
+
+    /* Roda cromática */
+    .roda-container {
+      position: relative;
+      width: clamp(220px, 32vw, 320px);
+      aspect-ratio: 1;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.8));
+    }
+
+    .disco-cor {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      cursor: crosshair;
+      position: relative;
+      background:
+        radial-gradient(circle at center, #808080 0%, transparent 70%),
+        conic-gradient(from 90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 4px 8px rgba(255, 255, 255, 0.12),
+        inset 0 -6px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    .cursor-roda {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 60ms linear;
+    }
+
+    /* Peitoril */
+    .peitoril {
+      width: 100%;
+      max-width: 580px;
+      background: var(--vidro-base);
+      backdrop-filter: blur(28px);
+      border: 1px solid var(--vidro-borda);
+      border-radius: 24px;
+      padding: 24px 28px;
+      box-shadow: var(--vidro-luz), 0 24px 48px -18px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .peitoril-topo {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(230, 225, 216, 0.07);
+      padding-bottom: 14px;
+    }
+
+    .codigo-hex {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(38px, 4.2vw, 56px);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      border-bottom: 3px solid var(--cor-ativa);
+      padding-bottom: 4px;
+      transition: border-color 200ms ease;
+    }
+
+    .hex-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .tag-matiz {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--tinta-media);
+    }
+
+    .btn-copiar {
+      background: none;
+      border: none;
+      color: var(--tinta-media);
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 200ms ease;
+    }
+
+    .btn-copiar:hover {
+      color: var(--tinta);
+      background: rgba(230, 225, 216, 0.08);
+    }
+
+    /* Sliders Fader */
+    .faders-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .fader-grupo {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .fader-rotulo {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: var(--tinta-fraca);
+    }
+
+    .fader-valor {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--tinta-media);
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(230, 225, 216, 0.12);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--tinta);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      transition: transform 150ms ease;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
+    }
+
+    /* Coluna Direita: O Painel de Contexto */
+    .coluna-painel {
+      background: var(--vidro-base);
+      backdrop-filter: blur(28px);
+      border: 1px solid var(--vidro-borda);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--vidro-luz), 0 30px 60px -20px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-height: 640px;
+      position: relative;
+      animation: surgirPainel 500ms var(--ease);
+    }
+
+    @keyframes surgirPainel {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Abas de Contexto */
+    .painel-abas {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(230, 225, 216, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .aba-btn {
+      background: none;
+      border: none;
+      color: var(--tinta-fraca);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 200ms ease;
+    }
+
+    .aba-btn:hover {
+      color: var(--tinta-media);
+      background: rgba(230, 225, 216, 0.05);
+    }
+
+    .aba-btn.ativo {
+      color: var(--tinta);
+      background: rgba(230, 225, 216, 0.1);
+      box-shadow: var(--vidro-luz);
+    }
+
+    .conteudo-aba {
+      overflow-y: auto;
+      padding-right: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .conteudo-aba::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .conteudo-aba::-webkit-scrollbar-thumb {
+      background: rgba(230, 225, 216, 0.15);
+      border-radius: 4px;
+    }
+
+    /* Sub-seções de Análise */
+    .cartao-analise {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(230, 225, 216, 0.06);
+      border-radius: 18px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cartao-titulo {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tinta-media);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Harmonias */
+    .harmonias-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip-harmonia {
+      flex: 1;
+      min-width: 46px;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .chip-harmonia:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+    }
+
+    /* Contraste WCAG */
+    .contraste-preview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .caixa-contraste {
+      padding: 14px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 75px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .contraste-texto {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .contraste-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      align-self: flex-start;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    /* Área de Imagem & Extrator */
+    .zona-upload {
+      border: 2px dashed rgba(230, 225, 216, 0.15);
+      border-radius: 18px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 200ms ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .zona-upload:hover, .zona-upload.arrastando {
+      border-color: var(--cor-ativa);
+      background: rgba(229, 154, 60, 0.05);
+    }
+
+    .zona-upload p {
+      font-size: 14px;
+      color: var(--tinta-media);
+    }
+
+    .zona-upload span {
+      font-size: 12px;
+      color: var(--tinta-fraca);
+    }
+
+    /* Canvas de Imagem com Lupa */
+    .viewport-imagem {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #050608;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: crosshair;
+      border: 1px solid rgba(230, 225, 216, 0.1);
+    }
+
+    .viewport-imagem canvas {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Lupa Magnifier Flutuante */
+    .lupa-magnifier {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 12px 28px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+      display: none;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+      background: #000;
+      z-index: 30;
+    }
+
+    .lupa-magnifier::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border: 1.5px solid #ffffff;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .lupa-tag {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* Amostras Dominantes */
+    .dominantes-fita {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .amostra-dominante {
+      flex: 1;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: transform 150ms ease;
+    }
+
+    .amostra-dominante:hover {
+      transform: scale(1.08);
+    }
+
+    /* Rodapé com Fita de Recentes */
+    footer {
+      position: relative;
+      z-index: 20;
+      padding: 16px 36px;
+      border-top: 1px solid rgba(230, 225, 216, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: rgba(9, 10, 15, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .fita-recentes {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ponto-recente {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      transition: transform 150ms ease;
+    }
+
+    .ponto-recente:hover {
+      transform: scale(1.15);
+    }
+
+    .instrucao-ctrl-v {
+      font-size: 12px;
+      color: var(--tinta-fraca);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .estudio-container.com-painel {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .coluna-painel {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="luz-focal" id="luzFocal"></div>
+
+  <header>
+    <a href="#" class="marca">
+      <div class="marca-ponto" id="marcaPonto"></div>
+      Lumen Ateliê
+    </a>
+    <div class="topo-acoes">
+      <button type="button" class="btn-toggle-painel ativo" id="btnTogglePainel">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="15" y1="3" x2="15" y2="21"></line>
+        </svg>
+        <span id="txtTogglePainel">Modo Ateliê (Painel Aberto)</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="estudio-container com-painel" id="estudioContainer">
+      
+      <!-- Coluna Esquerda: O Núcleo do Santuário (Roda + Peitoril) -->
+      <section class="coluna-nucleo">
+        <div class="roda-container">
+          <div class="disco-cor" id="discoCor">
+            <div class="cursor-roda" id="cursorRoda"></div>
+          </div>
+        </div>
+
+        <div class="peitoril">
+          <div class="peitoril-topo">
+            <div class="codigo-hex" id="displayHex">#E59A3C</div>
+            <div class="hex-meta">
+              <span class="tag-matiz" id="displayMatiz">Matiz 33°</span>
+              <button type="button" class="btn-copiar" id="btnCopiarHex">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copiar
+              </button>
+            </div>
+          </div>
+
+          <div class="faders-grid">
+            <div class="fader-grupo">
+              <div class="fader-rotulo">
+                <span>Saturação</span>
+                <span class="fader-valor" id="valSat">74%</span>
+              </div>
+              <input type="range" id="inputSat" min="0" max="100" value="74">
+            </div>
+
+            <div class="fader-grupo">
+              <div class="fader-rotulo">
+                <span>Brilho</span>
+                <span class="fader-valor" id="valBri">90%</span>
+              </div>
+              <input type="range" id="inputBri" min="0" max="100" value="90">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coluna Direita: O Painel de Contexto com Abas -->
+      <aside class="coluna-painel" id="colunaPainel">
+        <nav class="painel-abas">
+          <button type="button" class="aba-btn ativo" data-aba="analise" id="abaBtnAnalise">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            Análise & Harmonias
+          </button>
+          <button type="button" class="aba-btn" data-aba="imagem" id="abaBtnImagem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            Imagem de Referência
+          </button>
+        </nav>
+
+        <!-- Conteúdo da Aba 1: Análise (Harmonias + Contraste) -->
+        <div class="conteudo-aba" id="abaAnalise">
+          <div class="cartao-analise">
+            <div class="cartao-titulo">
+              <span>Harmonias Cromáticas</span>
+              <small style="text-transform:none; font-weight:400; color:var(--tinta-fraca)">Clique para aplicar</small>
+            </div>
+            <div class="harmonias-chips" id="gradeHarmonias">
+              <!-- Gerado via JS -->
+            </div>
+          </div>
+
+          <div class="cartao-analise">
+            <div class="cartao-titulo">
+              <span>Acessibilidade & Contraste (WCAG)</span>
+              <span id="badgeWcagStatus" style="color:#6be285; font-family:'JetBrains Mono'">Passa</span>
+            </div>
+            <div class="contraste-preview">
+              <div class="caixa-contraste" id="boxContrasteEscuro" style="background:#090a0f; color:var(--cor-ativa)">
+                <span class="contraste-texto">Texto Ativo</span>
+                <span class="contraste-badge" id="ratioEscuro">5.4 : 1 (AA)</span>
+              </div>
+              <div class="caixa-contraste" id="boxContrasteClaro" style="background:var(--cor-ativa); color:#090a0f">
+                <span class="contraste-texto">Fundo Ativo</span>
+                <span class="contraste-badge" id="ratioClaro">5.4 : 1 (AA)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conteúdo da Aba 2: Imagem de Referência com Conta-Gotas -->
+        <div class="conteudo-aba" id="abaImagem" style="display:none;">
+          <div class="zona-upload" id="zonaDrop" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--tinta-media)">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p>Arraste uma foto ou dê <strong>Ctrl + V</strong> em qualquer lugar</p>
+            <span>PNG, JPG ou WEBP (Processamento 100% no navegador)</span>
+          </div>
+
+          <div id="blocoImagemAtiva" style="display:none; flex-direction:column; gap:14px;">
+            <div class="viewport-imagem" id="viewportImagem">
+              <canvas id="canvasImagem"></canvas>
+              <div class="lupa-magnifier" id="lupaMagnifier">
+                <canvas id="canvasLupa" width="90" height="90"></canvas>
+                <div class="lupa-tag" id="lupaTag">#000000</div>
+              </div>
+            </div>
+
+            <div class="cartao-analise">
+              <div class="cartao-titulo">
+                <span>Tons Dominantes Extraídos</span>
+                <small style="text-transform:none; font-weight:400; color:var(--tinta-fraca)">Clique para aplicar</small>
+              </div>
+              <div class="dominantes-fita" id="fitaDominantes">
+                <!-- Gerado via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <footer>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; color:var(--tinta-fraca); font-weight:600">Recentes:</span>
+      <div class="fita-recentes" id="fitaRecentes">
+        <!-- Gerado via JS -->
+      </div>
+    </div>
+    <div class="instrucao-ctrl-v">
+      💡 Dica: Tire um print (Win+Shift+S) e aperte Ctrl+V para testar a imagem
+    </div>
+  </footer>
+
+  <script>
+    // --- ESTADO REATIVO DO LUMEN ---
+    const estado = {
+      h: 33,
+      s: 74,
+      v: 90,
+      hex: '#E59A3C',
+      recentes: ['#E59A3C', '#285AE5', '#38B278', '#D43872', '#8B5CF6'],
+      painelAberto: true,
+      abaAtiva: 'analise',
+      imagemCarregada: false
+    };
+
+    // Elementos DOM
+    const displayHex = document.getElementById('displayHex');
+    const displayMatiz = document.getElementById('displayMatiz');
+    const discoCor = document.getElementById('discoCor');
+    const cursorRoda = document.getElementById('cursorRoda');
+    const inputSat = document.getElementById('inputSat');
+    const inputBri = document.getElementById('inputBri');
+    const valSat = document.getElementById('valSat');
+    const valBri = document.getElementById('valBri');
+    const luzFocal = document.getElementById('luzFocal');
+    const marcaPonto = document.getElementById('marcaPonto');
+    const btnTogglePainel = document.getElementById('btnTogglePainel');
+    const txtTogglePainel = document.getElementById('txtTogglePainel');
+    const estudioContainer = document.getElementById('estudioContainer');
+    const colunaPainel = document.getElementById('colunaPainel');
+    const abaBtnAnalise = document.getElementById('abaBtnAnalise');
+    const abaBtnImagem = document.getElementById('abaBtnImagem');
+    const abaAnalise = document.getElementById('abaAnalise');
+    const abaImagem = document.getElementById('abaImagem');
+    const gradeHarmonias = document.getElementById('gradeHarmonias');
+    const boxContrasteEscuro = document.getElementById('boxContrasteEscuro');
+    const boxContrasteClaro = document.getElementById('boxContrasteClaro');
+    const ratioEscuro = document.getElementById('ratioEscuro');
+    const ratioClaro = document.getElementById('ratioClaro');
+    const fitaRecentes = document.getElementById('fitaRecentes');
+
+    // Elementos da Imagem
+    const fileInput = document.getElementById('fileInput');
+    const zonaDrop = document.getElementById('zonaDrop');
+    const blocoImagemAtiva = document.getElementById('blocoImagemAtiva');
+    const canvasImagem = document.getElementById('canvasImagem');
+    const ctxImagem = canvasImagem.getContext('2d', { willReadFrequently: true });
+    const viewportImagem = document.getElementById('viewportImagem');
+    const lupaMagnifier = document.getElementById('lupaMagnifier');
+    const canvasLupa = document.getElementById('canvasLupa');
+    const ctxLupa = canvasLupa.getContext('2d');
+    const lupaTag = document.getElementById('lupaTag');
+    const fitaDominantes = document.getElementById('fitaDominantes');
+
+    // --- CONVERSÕES DE COR ---
+    function hsvParaRgb(h, s, v) {
+      s /= 100; v /= 100;
+      let c = v * s;
+      let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+      let m = v - c;
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; }
+      else if (h < 120) { r = x; g = c; }
+      else if (h < 180) { g = c; b = x; }
+      else if (h < 240) { g = x; b = c; }
+      else if (h < 300) { r = x; b = c; }
+      else { r = c; b = x; }
+      return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+    }
+
+    function rgbParaHex(r, g, b) {
+      return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+    }
+
+    function hexParaHsv(hex) {
+      hex = hex.replace('#', '');
+      let r = parseInt(hex.substring(0, 2), 16) / 255;
+      let g = parseInt(hex.substring(2, 4), 16) / 255;
+      let b = parseInt(hex.substring(4, 6), 16) / 255;
+      let max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let d = max - min;
+      let h = 0, s = max === 0 ? 0 : d / max, v = max;
+      if (max !== min) {
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h *= 60;
+      }
+      return { h: Math.round(h), s: Math.round(s * 100), v: Math.round(v * 100) };
+    }
+
+    function calcularLuminancia(r, g, b) {
+      let [rs, gs, bs] = [r, g, b].map(c => {
+        c /= 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    }
+
+    // --- ATUALIZAÇÃO REATIVA DA UI ---
+    function sincronizarEstado() {
+      const [r, g, b] = hsvParaRgb(estado.h, estado.s, estado.v);
+      estado.hex = rgbParaHex(r, g, b);
+
+      // Injeta CSS Variables
+      document.documentElement.style.setProperty('--cor-ativa', estado.hex);
+      displayHex.textContent = estado.hex;
+      displayMatiz.textContent = `Matiz ${estado.h}°`;
+      valSat.textContent = `${estado.s}%`;
+      valBri.textContent = `${estado.v}%`;
+      inputSat.value = estado.s;
+      inputBri.value = estado.v;
+
+      // Luz focal
+      luzFocal.style.background = `radial-gradient(circle at 50% 30%, ${estado.hex}18 0%, ${estado.hex}08 45%, transparent 75%)`;
+
+      // Atualiza posição do cursor na roda
+      const rad = (estado.h - 90) * (Math.PI / 180);
+      const raio = (estado.s / 100) * 44; // % do raio do disco
+      const x = 50 + raio * Math.cos(rad);
+      const y = 50 + raio * Math.sin(rad);
+      cursorRoda.style.left = `${x}%`;
+      cursorRoda.style.top = `${y}%`;
+      cursorRoda.style.backgroundColor = estado.hex;
+
+      // Atualiza Harmonias
+      renderizarHarmonias();
+
+      // Atualiza Contraste
+      const lumAtiva = calcularLuminancia(r, g, b);
+      const lumFundo = calcularLuminancia(9, 10, 15);
+      const ratio = ((Math.max(lumAtiva, lumFundo) + 0.05) / (Math.min(lumAtiva, lumFundo) + 0.05)).toFixed(1);
+      ratioEscuro.textContent = `${ratio} : 1 (${ratio >= 4.5 ? 'Passa AA' : 'Baixo'})`;
+      ratioClaro.textContent = `${ratio} : 1 (${ratio >= 4.5 ? 'Passa AA' : 'Baixo'})`;
+    }
+
+    function renderizarHarmonias() {
+      const acordes = [
+        { rotulo: 'Base', h: estado.h },
+        { rotulo: 'Compl.', h: (estado.h + 180) % 360 },
+        { rotulo: 'Anál. 1', h: (estado.h + 330) % 360 },
+        { rotulo: 'Anál. 2', h: (estado.h + 30) % 360 },
+        { rotulo: 'Tríade', h: (estado.h + 120) % 360 }
+      ];
+      gradeHarmonias.innerHTML = '';
+      acordes.forEach(a => {
+        const [hr, hg, hb] = hsvParaRgb(a.h, estado.s, estado.v);
+        const hexHarmonia = rgbParaHex(hr, hg, hb);
+        const chip = document.createElement('div');
+        chip.className = 'chip-harmonia';
+        chip.style.backgroundColor = hexHarmonia;
+        chip.title = `${a.rotulo}: ${hexHarmonia}`;
+        chip.textContent = a.rotulo.substring(0, 5);
+        chip.onclick = () => {
+          estado.h = a.h;
+          sincronizarEstado();
+          adicionarRecente(estado.hex);
+        };
+        gradeHarmonias.appendChild(chip);
+      });
+    }
+
+    function adicionarRecente(hex) {
+      if (!estado.recentes.includes(hex)) {
+        estado.recentes.unshift(hex);
+        if (estado.recentes.length > 8) estado.recentes.pop();
+        renderizarRecentes();
+      }
+    }
+
+    function renderizarRecentes() {
+      fitaRecentes.innerHTML = '';
+      estado.recentes.forEach(hex => {
+        const ponto = document.createElement('div');
+        ponto.className = 'ponto-recente';
+        ponto.style.backgroundColor = hex;
+        ponto.title = `Aplicar ${hex}`;
+        ponto.onclick = () => {
+          const hsv = hexParaHsv(hex);
+          estado.h = hsv.h; estado.s = hsv.s; estado.v = hsv.v;
+          sincronizarEstado();
+        };
+        fitaRecentes.appendChild(ponto);
+      });
+    }
+
+    // --- INTERAÇÃO DA RODA ---
+    let arrastandoRoda = false;
+
+    function atualizarRodaPorCoords(e) {
+      const rect = discoCor.getBoundingClientRect();
+      const centroX = rect.left + rect.width / 2;
+      const centroY = rect.top + rect.height / 2;
+      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - centroX;
+      const y = (e.clientY || (e.touches && e.touches[0].clientY)) - centroY;
+
+      let angulo = Math.atan2(y, x) * (180 / Math.PI) + 90;
+      if (angulo < 0) angulo += 360;
+
+      const dist = Math.sqrt(x * x + y * y);
+      const raioMax = rect.width / 2;
+      const sat = Math.min(100, Math.round((dist / raioMax) * 100));
+
+      estado.h = Math.round(angulo) % 360;
+      estado.s = sat;
+      sincronizarEstado();
+    }
+
+    discoCor.addEventListener('mousedown', (e) => {
+      arrastandoRoda = true;
+      atualizarRodaPorCoords(e);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (arrastandoRoda) atualizarRodaPorCoords(e);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (arrastandoRoda) {
+        arrastandoRoda = false;
+        adicionarRecente(estado.hex);
+      }
+    });
+
+    // Faders
+    inputSat.addEventListener('input', (e) => {
+      estado.s = parseInt(e.target.value);
+      sincronizarEstado();
+    });
+    inputSat.addEventListener('change', () => adicionarRecente(estado.hex));
+
+    inputBri.addEventListener('input', (e) => {
+      estado.v = parseInt(e.target.value);
+      sincronizarEstado();
+    });
+    inputBri.addEventListener('change', () => adicionarRecente(estado.hex));
+
+    // Alternar Painel Ateliê vs Foco
+    btnTogglePainel.addEventListener('click', () => {
+      estado.painelAberto = !estado.painelAberto;
+      if (estado.painelAberto) {
+        estudioContainer.classList.add('com-painel');
+        colunaPainel.style.display = 'flex';
+        btnTogglePainel.classList.add('ativo');
+        txtTogglePainel.textContent = 'Modo Ateliê (Painel Aberto)';
+      } else {
+        estudioContainer.classList.remove('com-painel');
+        colunaPainel.style.display = 'none';
+        btnTogglePainel.classList.remove('ativo');
+        txtTogglePainel.textContent = 'Modo Foco (Expandir Ateliê)';
+      }
+    });
+
+    // Alternar Abas
+    abaBtnAnalise.addEventListener('click', () => {
+      abaBtnAnalise.classList.add('ativo');
+      abaBtnImagem.classList.remove('ativo');
+      abaAnalise.style.display = 'flex';
+      abaImagem.style.display = 'none';
+      estado.abaAtiva = 'analise';
+    });
+
+    abaBtnImagem.addEventListener('click', () => {
+      abaBtnImagem.classList.add('ativo');
+      abaBtnAnalise.classList.remove('ativo');
+      abaImagem.style.display = 'flex';
+      abaAnalise.style.display = 'none';
+      estado.abaAtiva = 'imagem';
+    });
+
+    // --- CARREGAMENTO DE IMAGEM & CONTA-GOTAS ---
+    function carregarImagemElemento(img) {
+      canvasImagem.width = img.naturalWidth || img.width;
+      canvasImagem.height = img.naturalHeight || img.height;
+      ctxImagem.drawImage(img, 0, 0);
+
+      zonaDrop.style.display = 'none';
+      blocoImagemAtiva.style.display = 'flex';
+      estado.imagemCarregada = true;
+
+      // Ativa aba imagem caso esteja na análise
+      if (estado.abaAtiva !== 'imagem') {
+        abaBtnImagem.click();
+      }
+      if (!estado.painelAberto) {
+        btnTogglePainel.click();
+      }
+
+      extrairCoresDominantes();
+    }
+
+    function processarArquivoImagem(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => carregarImagemElemento(img);
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processarArquivoImagem(e.target.files[0]);
+      }
+    });
+
+    // Suporte a Drag & Drop
+    window.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      zonaDrop.classList.add('arrastando');
+    });
+
+    window.addEventListener('dragleave', (e) => {
+      if (e.clientX <= 0 || e.clientY <= 0) zonaDrop.classList.remove('arrastando');
+    });
+
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      zonaDrop.classList.remove('arrastando');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processarArquivoImagem(e.dataTransfer.files[0]);
+      }
+    });
+
+    // SUPORTE UNIVERSAL A CTRL + V
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      for (let item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          processarArquivoImagem(blob);
+          break;
+        }
+      }
+    });
+
+    // Lupa Magnifier no Hover da Imagem
+    viewportImagem.addEventListener('mouseenter', () => {
+      if (estado.imagemCarregada) lupaMagnifier.style.display = 'block';
+    });
+
+    viewportImagem.addEventListener('mouseleave', () => {
+      lupaMagnifier.style.display = 'none';
+    });
+
+    viewportImagem.addEventListener('mousemove', (e) => {
+      if (!estado.imagemCarregada) return;
+
+      const rect = canvasImagem.getBoundingClientRect();
+      const xView = e.clientX - rect.left;
+      const yView = e.clientY - rect.top;
+
+      if (xView < 0 || yView < 0 || xView > rect.width || yView > rect.height) {
+        lupaMagnifier.style.display = 'none';
+        return;
+      }
+
+      lupaMagnifier.style.display = 'block';
+      const vpRect = viewportImagem.getBoundingClientRect();
+      lupaMagnifier.style.left = `${e.clientX - vpRect.left}px`;
+      lupaMagnifier.style.top = `${e.clientY - vpRect.top}px`;
+
+      // Converte para coordenadas da imagem real
+      const scaleX = canvasImagem.width / rect.width;
+      const scaleY = canvasImagem.height / rect.height;
+      const imgX = Math.floor(xView * scaleX);
+      const imgY = Math.floor(yView * scaleY);
+
+      // Desenha pixels na lupa com zoom
+      ctxLupa.imageSmoothingEnabled = false;
+      ctxLupa.clearRect(0, 0, 90, 90);
+      ctxLupa.drawImage(canvasImagem, imgX - 5, imgY - 5, 10, 10, 0, 0, 90, 90);
+
+      // Lê a cor do pixel central
+      const pixel = ctxImagem.getImageData(imgX, imgY, 1, 1).data;
+      const hexSobMira = rgbParaHex(pixel[0], pixel[1], pixel[2]);
+      lupaTag.textContent = hexSobMira;
+      lupaTag.style.borderBottom = `2px solid ${hexSobMira}`;
+    });
+
+    // Clique na imagem = Pinçar a cor!
+    viewportImagem.addEventListener('click', (e) => {
+      if (!estado.imagemCarregada) return;
+
+      const rect = canvasImagem.getBoundingClientRect();
+      const scaleX = canvasImagem.width / rect.width;
+      const scaleY = canvasImagem.height / rect.height;
+      const imgX = Math.floor((e.clientX - rect.left) * scaleX);
+      const imgY = Math.floor((e.clientY - rect.top) * scaleY);
+
+      const pixel = ctxImagem.getImageData(imgX, imgY, 1, 1).data;
+      const hexPincado = rgbParaHex(pixel[0], pixel[1], pixel[2]);
+      const hsv = hexParaHsv(hexPincado);
+
+      estado.h = hsv.h; estado.s = hsv.s; estado.v = hsv.v;
+      sincronizarEstado();
+      adicionarRecente(estado.hex);
+    });
+
+    // Extração simples de cores dominantes (Amostragem em grade)
+    function extrairCoresDominantes() {
+      const w = canvasImagem.width;
+      const h = canvasImagem.height;
+      const amostras = [];
+      const passoX = Math.max(1, Math.floor(w / 12));
+      const passoY = Math.max(1, Math.floor(h / 12));
+
+      for (let y = 0; y < h; y += passoY) {
+        for (let x = 0; x < w; x += passoX) {
+          const p = ctxImagem.getImageData(x, y, 1, 1).data;
+          // Ignora brancos e pretos extremos
+          if (p[0] + p[1] + p[2] > 40 && p[0] + p[1] + p[2] < 720) {
+            amostras.push(rgbParaHex(p[0], p[1], p[2]));
+          }
+        }
+      }
+
+      // Filtra tons únicos
+      const unicos = [...new Set(amostras)].slice(0, 6);
+      fitaDominantes.innerHTML = '';
+      unicos.forEach(hex => {
+        const chip = document.createElement('div');
+        chip.className = 'amostra-dominante';
+        chip.style.backgroundColor = hex;
+        chip.title = `Aplicar ${hex}`;
+        chip.onclick = () => {
+          const hsv = hexParaHsv(hex);
+          estado.h = hsv.h; estado.s = hsv.s; estado.v = hsv.v;
+          sincronizarEstado();
+          adicionarRecente(estado.hex);
+        };
+        fitaDominantes.appendChild(chip);
+      });
+    }
+
+    // Cria imagem padrão de demonstração para teste imediato
+    function gerarImagemExemplo() {
+      const imgCanvas = document.createElement('canvas');
+      imgCanvas.width = 600;
+      imgCanvas.height = 340;
+      const gctx = imgCanvas.getContext('2d');
+
+      // Gradiente pôr do sol / floresta escura
+      const grad = gctx.createLinearGradient(0, 0, 600, 340);
+      grad.addColorStop(0, '#1a102f');
+      grad.addColorStop(0.3, '#79284d');
+      grad.addColorStop(0.6, '#e05a47');
+      grad.addColorStop(0.85, '#f6ad55');
+      grad.addColorStop(1, '#234e52');
+      gctx.fillStyle = grad;
+      gctx.fillRect(0, 0, 600, 340);
+
+      // Círculo de sol
+      gctx.beginPath();
+      gctx.arc(420, 160, 50, 0, Math.PI * 2);
+      gctx.fillStyle = '#fff4d9';
+      gctx.shadowColor = '#f6ad55';
+      gctx.shadowBlur = 35;
+      gctx.fill();
+
+      carregarImagemElemento(imgCanvas);
+    }
+
+    // Copiar HEX
+    document.getElementById('btnCopiarHex').addEventListener('click', () => {
+      navigator.clipboard.writeText(estado.hex);
+      const btn = document.getElementById('btnCopiarHex');
+      btn.innerHTML = 'Copiado!';
+      setTimeout(() => {
+        btn.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copiar
+        `;
+      }, 1500);
+    });
+
+    // Inicialização
+    sincronizarEstado();
+    renderizarRecentes();
+    gerarImagemExemplo(); // Carrega demonstração para testar de imediato
+  </script>
+</body>
+</html>
+

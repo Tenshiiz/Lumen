@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumen — Módulo 2: Painel de Análise Sensorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fundo: #08090d;
+      --fundo-elevado: #111319;
+      --vidro-base: rgba(16, 18, 25, 0.75);
+      --vidro-borda: rgba(230, 225, 216, 0.08);
+      --vidro-luz: inset 0 1px 0 rgba(255, 225, 190, 0.12);
+      --tinta: #e8e3da;
+      --tinta-media: #9a9790;
+      --tinta-fraca: #63615c;
+      --cor-ativa: #e59a3c;
+      --matiz-ativa: 33;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--tinta);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      overflow-x: hidden;
+    }
+
+    /* Brilho de ambiente */
+    .luz-focal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75vw;
+      height: 70vh;
+      background: radial-gradient(circle, rgba(229, 154, 60, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+      transition: background 400ms var(--ease);
+    }
+
+    .painel-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 580px;
+      background: var(--vidro-base);
+      backdrop-filter: blur(32px);
+      border: 1px solid var(--vidro-borda);
+      box-shadow: var(--vidro-luz), 0 32px 64px -20px rgba(0, 0, 0, 0.9);
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 28px;
+    }
+
+    /* Cabeçalho do Painel */
+    .painel-topo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(230, 225, 216, 0.06);
+      padding-bottom: 16px;
+    }
+
+    .painel-titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--tinta);
+    }
+
+    .cor-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(230, 225, 216, 0.08);
+      border: 1px solid var(--vidro-borda);
+      color: var(--tinta);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cor-badge-ponto {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--cor-ativa);
+      box-shadow: 0 0 8px var(--cor-ativa);
+    }
+
+    /* 1. Harmonias como Constelação Radial */
+    .cartao-flutuante {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(230, 225, 216, 0.06);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 250ms ease, box-shadow 250ms ease;
+    }
+
+    .cartao-flutuante:hover {
+      border-color: rgba(229, 154, 60, 0.25);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .secao-cabecalho {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      color: var(--tinta-media);
+    }
+
+    /* Diagrama da Constelação Orbital */
+    .constelacao-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orbita-trilho {
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      border: 1px dashed rgba(230, 225, 216, 0.12);
+      pointer-events: none;
+    }
+
+    .orbita-centro {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--cor-ativa);
+      box-shadow: 0 0 22px var(--cor-ativa), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      cursor: default;
+    }
+
+    .satelite-harmonia {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      transition: transform 300ms var(--ease), box-shadow 200ms ease;
+      z-index: 6;
+      transform: translate(-50%, -50%);
+    }
+
+    .satelite-harmonia:hover {
+      transform: translate(-50%, -50%) scale(1.22);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+      border-color: #ffffff;
+    }
+
+    .fita-rotulos-harmonia {
+      display: flex;
+      justify-content: space-around;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--tinta-fraca);
+    }
+
+    /* 2. Contraste como Termômetro Visual */
+    .termometro-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .termometro-barra {
+      position: relative;
+      width: 100%;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, 
+        #d33a3a 0%, 
+        #d33a3a 25%, 
+        #e59a3c 25%, 
+        #e59a3c 45%, 
+        #38b278 45%, 
+        #38b278 70%, 
+        #f6ad55 100%
+      );
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .termometro-marcador {
+      position: absolute;
+      top: 50%;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.7), 0 4px 10px rgba(0, 0, 0, 0.9);
+      transform: translate(-50%, -50%);
+      transition: left 400ms var(--ease);
+    }
+
+    .termometro-marcador::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cor-ativa);
+      transform: translate(-50%, -50%);
+    }
+
+    .termometro-marcos {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--tinta-fraca);
+    }
+
+    .termometro-preview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .preview-box {
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ratio-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* 3. Daltonismo como Espelho Emocional (Miniaturas da Roda) */
+    .daltonismo-grade {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .mini-espelho {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(230, 225, 216, 0.05);
+      cursor: pointer;
+      transition: all 200ms ease;
+    }
+
+    .mini-espelho:hover {
+      background: rgba(230, 225, 216, 0.05);
+      border-color: rgba(230, 225, 216, 0.15);
+    }
+
+    .disco-simulado {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .espelho-rotulo {
+      font-size: 11px;
+      color: var(--tinta-media);
+      font-weight: 500;
+    }
+
+    .espelho-hex {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--tinta-fraca);
+    }
+
+    /* Slider de Simulação Rápida de Matiz */
+    .controle-rapido {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="luz-focal" id="luzFocal"></div>
+
+  <div class="painel-container">
+    
+    <!-- Topo -->
+    <header class="painel-topo">
+      <div class="painel-titulo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+          <path d="M2 12h20"></path>
+        </svg>
+        Painel de Análise de Precisão
+      </div>
+      <div class="cor-badge">
+        <div class="cor-badge-ponto" id="pontoCor"></div>
+        <span id="hexTopo">#E59A3C</span>
+      </div>
+    </header>
+
+    <!-- Slider de teste de Matiz -->
+    <div class="controle-rapido">
+      <div class="secao-cabecalho">
+        <span>Girar Matiz Ativa</span>
+        <span id="txtMatiz" style="font-family:'JetBrains Mono'">33°</span>
+      </div>
+      <input type="range" id="sliderMatiz" min="0" max="360" value="33">
+    </div>
+
+    <!-- 1. Harmonias em Constelação Radial -->
+    <div class="cartao-flutuante">
+      <div class="secao-cabecalho">
+        <span>Harmonias Cromáticas (Constelação Radial)</span>
+        <span style="color:var(--tinta-fraca)">Clique para aplicar</span>
+      </div>
+
+      <div class="constelacao-container">
+        <div class="orbita-trilho"></div>
+        <div class="orbita-centro" id="orbitaCentro">Base</div>
+        <div id="satelitesContainer">
+          <!-- Gerado via JS nos ângulos exatos -->
+        </div>
+      </div>
+
+      <div class="fita-rotulos-harmonia">
+        <span>Compl. (+180°)</span>
+        <span>Análogas (±30°)</span>
+        <span>Tríade (+120°)</span>
+      </div>
+    </div>
+
+    <!-- 2. Contraste como Termômetro Visual -->
+    <div class="cartao-flutuante">
+      <div class="secao-cabecalho">
+        <span>Contraste WCAG (Termômetro Visual)</span>
+        <span id="statusWcag" style="font-family:'JetBrains Mono'; color:#38b278">Passa AA</span>
+      </div>
+
+      <div class="termometro-container">
+        <div class="termometro-barra">
+          <div class="termometro-marcador" id="termometroMarcador"></div>
+        </div>
+        <div class="termometro-marcos">
+          <span>1:1 Falha</span>
+          <span>3:1 Grande</span>
+          <span>4.5:1 AA</span>
+          <span>7:1 AAA Ouro</span>
+          <span>21:1</span>
+        </div>
+
+        <div class="termometro-preview">
+          <div class="preview-box" id="boxPreto" style="background:#08090d; color:var(--cor-ativa)">
+            <span>Texto Ativo</span>
+            <span class="ratio-badge" id="ratioPreto">5.4 : 1</span>
+          </div>
+          <div class="preview-box" id="boxCor" style="background:var(--cor-ativa); color:#08090d">
+            <span>Fundo Ativo</span>
+            <span class="ratio-badge" id="ratioCor">5.4 : 1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Daltonismo como Espelho Emocional -->
+    <div class="cartao-flutuante">
+      <div class="secao-cabecalho">
+        <span>Espelho de Daltonismo (Miniaturas da Roda)</span>
+        <span style="color:var(--tinta-fraca)">3 Simulações</span>
+      </div>
+
+      <div class="daltonismo-grade">
+        <div class="mini-espelho" id="cardProtanopia">
+          <div class="disco-simulado" id="discoProtanopia"></div>
+          <span class="espelho-rotulo">Protanopia</span>
+          <span class="espelho-hex" id="hexProtanopia">#B3A53C</span>
+        </div>
+        <div class="mini-espelho" id="cardDeuteranopia">
+          <div class="disco-simulado" id="discoDeuteranopia"></div>
+          <span class="espelho-rotulo">Deuteranopia</span>
+          <span class="espelho-hex" id="hexDeuteranopia">#BAA23C</span>
+        </div>
+        <div class="mini-espelho" id="cardTritanopia">
+          <div class="disco-simulado" id="discoTritanopia"></div>
+          <span class="espelho-rotulo">Tritanopia</span>
+          <span class="espelho-hex" id="hexTritanopia">#E59696</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- ESTADO REATIVO ---
+    let matiz = 33;
+    let sat = 74;
+    let bri = 90;
+    let hexAtual = '#E59A3C';
+
+    const satelitesContainer = document.getElementById('satelitesContainer');
+    const orbitaCentro = document.getElementById('orbitaCentro');
+    const hexTopo = document.getElementById('hexTopo');
+    const pontoCor = document.getElementById('pontoCor');
+    const txtMatiz = document.getElementById('txtMatiz');
+    const sliderMatiz = document.getElementById('sliderMatiz');
+    const termometroMarcador = document.getElementById('termometroMarcador');
+    const statusWcag = document.getElementById('statusWcag');
+    const ratioPreto = document.getElementById('ratioPreto');
+    const ratioCor = document.getElementById('ratioCor');
+    const boxPreto = document.getElementById('boxPreto');
+    const boxCor = document.getElementById('boxCor');
+    const luzFocal = document.getElementById('luzFocal');
+
+    // Funções de Cor
+    function hsvParaRgb(h, s, v) {
+      s /= 100; v /= 100;
+      let c = v * s;
+      let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+      let m = v - c;
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; }
+      else if (h < 120) { r = x; g = c; }
+      else if (h < 180) { g = c; b = x; }
+      else if (h < 240) { g = x; b = c; }
+      else if (h < 300) { r = x; b = c; }
+      else { r = c; b = x; }
+      return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+    }
+
+    function rgbParaHex(r, g, b) {
+      return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+    }
+
+    function calcularLuminancia(r, g, b) {
+      let [rs, gs, bs] = [r, g, b].map(c => {
+        c /= 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    }
+
+    // Matriz simplificada de Daltonismo
+    function simularDaltonismo(r, g, b, tipo) {
+      if (tipo === 'protanopia') {
+        return [0.56667 * r + 0.43333 * g, 0.55833 * r + 0.44167 * g, 0.24167 * g + 0.75833 * b];
+      }
+      if (tipo === 'deuteranopia') {
+        return [0.625 * r + 0.375 * g, 0.7 * r + 0.3 * g, 0.3 * g + 0.7 * b];
+      }
+      // tritanopia
+      return [0.95 * r + 0.05 * g, 0.43333 * g + 0.56667 * b, 0.475 * g + 0.525 * b];
+    }
+
+    function atualizarPainel() {
+      const [r, g, b] = hsvParaRgb(matiz, sat, bri);
+      hexAtual = rgbParaHex(r, g, b);
+
+      document.documentElement.style.setProperty('--cor-ativa', hexAtual);
+      hexTopo.textContent = hexAtual;
+      txtMatiz.textContent = `${matiz}°`;
+      sliderMatiz.value = matiz;
+      luzFocal.style.background = `radial-gradient(circle, ${hexAtual}14 0%, transparent 60%)`;
+
+      // 1. Renderiza a Constelação Orbital
+      renderizarConstelacao();
+
+      // 2. Calcula Termômetro WCAG
+      const lumCor = calcularLuminancia(r, g, b);
+      const lumFundo = calcularLuminancia(8, 9, 13);
+      const ratio = ((Math.max(lumCor, lumFundo) + 0.05) / (Math.min(lumCor, lumFundo) + 0.05)).toFixed(1);
+      
+      ratioPreto.textContent = `${ratio} : 1`;
+      ratioCor.textContent = `${ratio} : 1`;
+
+      // Posiciona marcador no termômetro (escala de 1 até 10 como 0% a 100%)
+      const pct = Math.min(100, Math.max(0, ((ratio - 1) / 9) * 100));
+      termometroMarcador.style.left = `${pct}%`;
+
+      if (ratio >= 7.0) {
+        statusWcag.textContent = 'Ouro AAA (Máximo)';
+        statusWcag.style.color = '#f6ad55';
+      } else if (ratio >= 4.5) {
+        statusWcag.textContent = 'Passa AA (Excelente)';
+        statusWcag.style.color = '#38b278';
+      } else if (ratio >= 3.0) {
+        statusWcag.textContent = 'Apenas Texto Grande';
+        statusWcag.style.color = '#e59a3c';
+      } else {
+        statusWcag.textContent = 'Falha WCAG';
+        statusWcag.style.color = '#d33a3a';
+      }
+
+      // 3. Simulações de Daltonismo
+      const [pr, pg, pb] = simularDaltonismo(r, g, b, 'protanopia').map(Math.round);
+      const [dr, dg, db] = simularDaltonismo(r, g, b, 'deuteranopia').map(Math.round);
+      const [tr, tg, tb] = simularDaltonismo(r, g, b, 'tritanopia').map(Math.round);
+
+      const hexP = rgbParaHex(pr, pg, pb);
+      const hexD = rgbParaHex(dr, dg, db);
+      const hexT = rgbParaHex(tr, tg, tb);
+
+      document.getElementById('discoProtanopia').style.backgroundColor = hexP;
+      document.getElementById('hexProtanopia').textContent = hexP;
+
+      document.getElementById('discoDeuteranopia').style.backgroundColor = hexD;
+      document.getElementById('hexDeuteranopia').textContent = hexD;
+
+      document.getElementById('discoTritanopia').style.backgroundColor = hexT;
+      document.getElementById('hexTritanopia').textContent = hexT;
+    }
+
+    function renderizarConstelacao() {
+      satelitesContainer.innerHTML = '';
+      const satelites = [
+        { rotulo: 'Compl', anguloOffset: 180, dist: 85 },
+        { rotulo: 'Anál -', anguloOffset: -30, dist: 85 },
+        { rotulo: 'Anál +', anguloOffset: 30, dist: 85 },
+        { rotulo: 'Tríade 1', anguloOffset: 120, dist: 85 },
+        { rotulo: 'Tríade 2', anguloOffset: 240, dist: 85 }
+      ];
+
+      satelites.forEach(s => {
+        const anguloReal = (matiz + s.anguloOffset + 360) % 360;
+        const [sr, sg, sb] = hsvParaRgb(anguloReal, sat, bri);
+        const satHex = rgbParaHex(sr, sg, sb);
+
+        // Converte coordenadas angulares (0° no topo)
+        const rad = (s.anguloOffset - 90) * (Math.PI / 180);
+        const cx = 50 + (s.dist / 220) * 100 * Math.cos(rad);
+        const cy = 50 + (s.dist / 220) * 100 * Math.sin(rad);
+
+        const el = document.createElement('div');
+        el.className = 'satelite-harmonia';
+        el.style.left = `${cx}%`;
+        el.style.top = `${cy}%`;
+        el.style.backgroundColor = satHex;
+        el.textContent = s.rotulo.split(' ')[0];
+        el.title = `${s.rotulo}: ${satHex}`;
+        el.onclick = () => {
+          matiz = anguloReal;
+          atualizarPainel();
+        };
+
+        satelitesContainer.appendChild(el);
+      });
+    }
+
+    sliderMatiz.addEventListener('input', (e) => {
+      matiz = parseInt(e.target.value);
+      atualizarPainel();
+    });
+
+    atualizarPainel();
+  </script>
+</body>
+</html>
+

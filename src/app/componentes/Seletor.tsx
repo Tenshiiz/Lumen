@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { useColorStore, useHex } from '@/stores/useColorStore'
 import { useCopiar } from '@/hooks/useCopiar'
 import RodaSeletor from './RodaSeletor'
 import Fader from './Fader'
 import CamposDeValor from './CamposDeValor'
+import PainelContexto from './PainelContexto'
 import { IconeCheck, IconeCopiar } from './Icones'
 
 function Seletor() {
@@ -17,13 +19,32 @@ function Seletor() {
   const setBrightness = useColorStore((estado) => estado.setBrightness)
   const commitColor = useColorStore((estado) => estado.commitColor)
   const { copiar, copiado } = useCopiar()
+  const [painelAberto, setPainelAberto] = useState(true)
 
   return (
     <div id="seletor" className="flex-1 flex flex-col justify-between relative">
-      {/* Vão da janela: centralização vertical do disco seletor */}
-      <div className="flex-1 flex items-center justify-center relative z-10 min-h-[160px] py-3 px-4">
-        <div className="peitoril-disco">
-          <RodaSeletor />
+      {/* Vão da janela: Ateliê integrado no desktop (Roda à esquerda, Painel de Contexto à direita) */}
+      <div className="flex-1 flex items-center justify-center relative z-10 min-h-0 py-1 max-[900px]:py-2 px-[clamp(16px,4vw,56px)] w-full max-w-[1360px] mx-auto">
+        <div
+          className={`w-full grid items-center transition-all duration-[var(--t-medio)] ease-[var(--ease)] ${
+            painelAberto
+              ? 'min-[1080px]:grid-cols-[1.1fr_0.9fr] min-[1080px]:gap-[clamp(30px,5vw,70px)]'
+              : 'grid-cols-1'
+          }`}
+        >
+          {/* Lado Esquerdo: Roda Cromática */}
+          <div className="flex items-center justify-center">
+            <div className="peitoril-disco">
+              <RodaSeletor />
+            </div>
+          </div>
+
+          {/* Lado Direito: Painel de Contexto no Desktop */}
+          {painelAberto && (
+            <div className="hidden min-[1080px]:block max-w-[500px] w-full ml-auto animate-in fade-in duration-300">
+              <PainelContexto onFechar={() => setPainelAberto(false)} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -42,6 +63,14 @@ function Seletor() {
             >
               {copiado === 'Hex' ? <IconeCheck /> : <IconeCopiar />}
               Copiar
+            </button>
+            <button
+              type="button"
+              className="hidden min-[1080px]:inline-flex items-center gap-[6px] border-0 py-1 px-2.5 rounded-[var(--raio-pilula)] bg-[rgba(var(--tinta-rgb),0.06)] cursor-pointer text-[13px] font-medium text-[var(--tinta-media)] hover:text-[var(--tinta)] hover:bg-[rgba(var(--tinta-rgb),0.1)] transition-colors active:scale-[0.96]"
+              onClick={() => setPainelAberto(!painelAberto)}
+              title={painelAberto ? 'Recolher painel para modo foco' : 'Expandir painel do ateliê'}
+            >
+              {painelAberto ? 'Modo Foco' : 'Ateliê'}
             </button>
           </div>
         </div>

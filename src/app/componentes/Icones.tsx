@@ -64,3 +64,10 @@ export const IconeBaixar = (p: SVGProps<SVGSVGElement>) => (
     <path d="M12 4v11M7.5 10.8 12 15.3l4.5-4.5M5 19.5h14" />
   </Icone>
 )
+
+export const IconeMais = (p: SVGProps<SVGSVGElement>) => (
+  <Icone strokeWidth="2" {...p}>
+    <path d="M12 5v14M5 12h14" />
+  </Icone>
+)
+

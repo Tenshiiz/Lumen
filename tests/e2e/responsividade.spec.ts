@@ -31,10 +31,28 @@ test.describe('Responsividade e Integridade Visual Multi-Dispositivo', () => {
       // 1. O disco nunca deve sobrepor o cabeçalho superior
       expect(discoBox.y).toBeGreaterThanOrEqual(topoBox.y + topoBox.height)
 
-      // 2. O disco deve estar horizontalmente centralizado na viewport
+      // 2. Posicionamento horizontal: centralizado no mobile e na coluna nobre do Ateliê no desktop
       const centroDiscoX = discoBox.x + discoBox.width / 2
       const centroTelaX = viewport.width / 2
-      expect(Math.abs(centroDiscoX - centroTelaX)).toBeLessThan(15)
+
+      if (viewport.width >= 1080) {
+        // No modo ateliê desktop, o disco fica na coluna esquerda e o painel de contexto à direita
+        expect(centroDiscoX).toBeLessThan(centroTelaX)
+        const painelContexto = page.locator('aside[aria-label*="Painel de Análise"]')
+        await expect(painelContexto).toBeVisible()
+
+        // Valida alternância para a aba de Imagem e presença do extrator
+        const abaImagem = page.getByRole('button', { name: /^Imagem$/i })
+        if (await abaImagem.isVisible()) {
+          await abaImagem.click()
+          await expect(page.getByRole('button', { name: /Carregar Imagem/i })).toBeVisible()
+          // Retorna para a aba de Análise
+          await page.getByRole('button', { name: /Análise & Harmonias/i }).click()
+        }
+      } else {
+        // Em telas compactas e mobile, o disco é centralizado na tela
+        expect(Math.abs(centroDiscoX - centroTelaX)).toBeLessThan(15)
+      }
 
       // 3. Em telas desktop/notebook/ipad (altura > 600), o disco não deve ultrapassar a viewport inicial
       if (viewport.height >= 600) {

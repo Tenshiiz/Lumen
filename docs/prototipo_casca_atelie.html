@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumen — Módulo 3: Casca do Ateliê e Transições</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fundo: #08090d;
+      --fundo-elevado: #111319;
+      --vidro-base: rgba(16, 18, 25, 0.72);
+      --vidro-borda: rgba(230, 225, 216, 0.08);
+      --vidro-luz: inset 0 1px 0 rgba(255, 225, 190, 0.12);
+      --tinta: #e8e3da;
+      --tinta-media: #9a9790;
+      --tinta-fraca: #63615c;
+      --cor-ativa: #e59a3c;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --t-transicao: 500ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--tinta);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Névoa viva no fundo */
+    .nevoa-fundo {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 40% 30%, rgba(229, 154, 60, 0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Topo com Atalhos e Frestas */
+    header {
+      position: relative;
+      z-index: 20;
+      padding: 24px 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(230, 225, 216, 0.05);
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--tinta);
+      text-decoration: none;
+    }
+
+    .marca-luz {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--cor-ativa);
+      box-shadow: 0 0 14px var(--cor-ativa);
+    }
+
+    /* Abas como Frestas de Luz */
+    .nav-frestas {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .fresta-item {
+      position: relative;
+      background: none;
+      border: none;
+      color: var(--tinta-fraca);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 250ms ease;
+    }
+
+    .fresta-item:hover {
+      color: var(--tinta-media);
+    }
+
+    .fresta-item.ativo {
+      color: var(--tinta);
+    }
+
+    /* Linha de brasa luminosa sob a aba ativa */
+    .fresta-item.ativo::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2.5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--cor-ativa), transparent);
+      box-shadow: 0 0 10px var(--cor-ativa);
+      animation: pulsarBrasa 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulsarBrasa {
+      0% { opacity: 0.7; transform: scaleX(0.9); }
+      100% { opacity: 1; transform: scaleX(1.05); }
+    }
+
+    .atalho-k {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--tinta-fraca);
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(230, 225, 216, 0.06);
+      border: 1px solid var(--vidro-borda);
+    }
+
+    /* Palco Central: Proporção Áurea (61.8% / 38.2%) */
+    main {
+      flex: 1;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 44px;
+    }
+
+    .palco-grid {
+      width: 100%;
+      max-width: 1380px;
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      transition: all var(--t-transicao) var(--ease);
+      gap: 0;
+    }
+
+    /* Estado Ateliê: Proporção Áurea com Margem de Nevoeiro (70px) */
+    .palco-grid.modo-atelie {
+      grid-template-columns: 61.8% 38.2%;
+      gap: 70px;
+    }
+
+    /* Coluna Esquerda: O Núcleo Nobre */
+    .nucleo-nobre {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--t-transicao) var(--ease);
+    }
+
+    .disco-preview {
+      width: clamp(230px, 30vw, 320px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(from 90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      margin-bottom: 24px;
+    }
+
+    .peitoril-nobre {
+      width: 100%;
+      max-width: 520px;
+      background: var(--vidro-base);
+      backdrop-filter: blur(28px);
+      border: 1px solid var(--vidro-borda);
+      border-radius: 22px;
+      padding: 22px 28px;
+      box-shadow: var(--vidro-luz), 0 24px 48px -18px rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Coluna Direita: O Apêndice Gracioso (Painel Contextual) */
+    .apendice-painel {
+      background: var(--vidro-base);
+      backdrop-filter: blur(32px);
+      border: 1px solid var(--vidro-borda);
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow: var(--vidro-luz), 0 32px 64px -20px rgba(0, 0, 0, 0.9);
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      opacity: 0;
+      transform: translateX(40px);
+      pointer-events: none;
+      transition: all var(--t-transicao) var(--ease);
+    }
+
+    .palco-grid.modo-atelie .apendice-painel {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .apendice-conteudo {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      border: 1px dashed rgba(230, 225, 216, 0.1);
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    /* Botão de Toggle Central */
+    .btn-toggle-modo {
+      background: rgba(230, 225, 216, 0.08);
+      border: 1px solid var(--vidro-borda);
+      color: var(--tinta);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--vidro-luz);
+      transition: all 200ms ease;
+    }
+
+    .btn-toggle-modo:hover {
+      background: rgba(230, 225, 216, 0.14);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nevoa-fundo"></div>
+
+  <header>
+    <a href="#" class="marca">
+      <div class="marca-luz"></div>
+      Lumen · Macro
+    </a>
+
+    <!-- Abas com frestas de luz e atalhos -->
+    <nav class="nav-frestas">
+      <button type="button" class="fresta-item ativo" id="abaAnalise" onclick="selecionarAba('analise')">
+        Análise & Harmonias
+        <span class="atalho-k">[A]</span>
+      </button>
+      <button type="button" class="fresta-item" id="abaImagem" onclick="selecionarAba('imagem')">
+        Imagem de Referência
+        <span class="atalho-k">[I]</span>
+      </button>
+      <button type="button" class="fresta-item" id="abaColecao" onclick="selecionarAba('colecao')">
+        Coleção
+        <span class="atalho-k">[C]</span>
+      </button>
+    </nav>
+
+    <button type="button" class="btn-toggle-modo" id="btnToggle" onclick="alternarModo()">
+      <span id="txtModo">Modo Ateliê (61.8% Áureo)</span>
+      <span class="atalho-k">[F]</span>
+    </button>
+  </header>
+
+  <main>
+    <div class="palco-grid modo-atelie" id="palcoGrid">
+      
+      <!-- Coluna Esquerda: Núcleo (Roda e Peitoril) -->
+      <div class="nucleo-nobre">
+        <div class="disco-preview"></div>
+        <div class="peitoril-nobre">
+          <div>
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--tinta-fraca); font-weight:600">Cor Ativa</div>
+            <div style="font-family:'JetBrains Mono'; font-size:36px; font-weight:500; color:var(--tinta); border-bottom:2px solid var(--cor-ativa)">#E59A3C</div>
+          </div>
+          <div style="font-family:'JetBrains Mono'; font-size:13px; color:var(--tinta-media)">
+            Saturação 74% · Brilho 90%
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna Direita: Apêndice (Separado por Margem de Nevoeiro de 70px) -->
+      <aside class="apendice-painel" id="apendicePainel">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(230,225,216,0.06); padding-bottom:12px">
+          <span style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--tinta-media)" id="tituloApendice">Instrumento Ativo: Análise</span>
+          <span style="font-family:'JetBrains Mono'; font-size:11px; color:var(--tinta-fraca)">38.2% do Ateliê</span>
+        </div>
+
+        <div class="apendice-conteudo" id="corpoApendice">
+          <p style="font-size:15px; font-weight:500; color:var(--tinta)">Painel de Contexto Ativo</p>
+          <span style="font-size:13px; color:var(--tinta-fraca); max-width:320px">
+            Aqui se conectam as Harmonias, o Termômetro WCAG ou o Extrator de Imagens sem colidir com a roda cromática.
+          </span>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <script>
+    let modoAtelie = true;
+    let abaAtiva = 'analise';
+
+    const palcoGrid = document.getElementById('palcoGrid');
+    const txtModo = document.getElementById('txtModo');
+    const tituloApendice = document.getElementById('tituloApendice');
+
+    function alternarModo() {
+      modoAtelie = !modoAtelie;
+      if (modoAtelie) {
+        palcoGrid.classList.add('modo-atelie');
+        txtModo.textContent = 'Modo Ateliê (61.8% Áureo)';
+      } else {
+        palcoGrid.classList.remove('modo-atelie');
+        txtModo.textContent = 'Modo Foco (Centralizado)';
+      }
+    }
+
+    function selecionarAba(aba) {
+      if (!modoAtelie) alternarModo();
+      abaAtiva = aba;
+      document.querySelectorAll('.fresta-item').forEach(el => el.classList.remove('ativo'));
+      if (aba === 'analise') {
+        document.getElementById('abaAnalise').classList.add('ativo');
+        tituloApendice.textContent = 'Instrumento Ativo: Análise';
+      } else if (aba === 'imagem') {
+        document.getElementById('abaImagem').classList.add('ativo');
+        tituloApendice.textContent = 'Instrumento Ativo: Imagem';
+      } else if (aba === 'colecao') {
+        document.getElementById('abaColecao').classList.add('ativo');
+        tituloApendice.textContent = 'Instrumento Ativo: Coleção';
+      }
+    }
+
+    // Atalhos de Teclado [A], [I], [C], [F]
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'a' || e.key === 'A') selecionarAba('analise');
+      if (e.key === 'i' || e.key === 'I') selecionarAba('imagem');
+      if (e.key === 'c' || e.key === 'C') selecionarAba('colecao');
+      if (e.key === 'f' || e.key === 'F') alternarModo();
+    });
+  </script>
+</body>
+</html>
+
