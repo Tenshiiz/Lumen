@@ -30,14 +30,14 @@ function Seletor() {
       <div className="peitoril">
         <div className="max-w-[1280px] mx-auto px-[clamp(20px,5vw,64px)] pb-[clamp(24px,3.6vh,42px)] grid grid-cols-1 max-[900px]:justify-stretch min-[901px]:grid-cols-[auto_minmax(260px,500px)] min-[901px]:justify-between items-end gap-x-[clamp(30px,6vw,90px)] gap-y-[clamp(20px,3vh,34px)]">
         <div className="min-w-0">
-          <span className="inline-block font-mono font-normal text-[clamp(38px,4.8vw,66px)] tracking-[-0.035em] leading-none tabular-nums text-[var(--tinta)] pb-[11px] border-b-[3px] border-[var(--cor-atual)] transition-[border-color] duration-[var(--t-curto)] ease-[var(--ease)]">
+          <span className="inline-block font-mono font-normal text-[clamp(42px,5.2vw,70px)] tracking-[-0.035em] leading-none tabular-nums text-[var(--tinta)] pb-[11px] border-b-[3px] border-[var(--cor-atual)] transition-[border-color] duration-[var(--t-curto)] ease-[var(--ease)]">
             {hex}
           </span>
           <div className="mt-[13px] flex items-center gap-[18px] flex-wrap">
-            <p className="font-mono text-[14px] tabular-nums text-[var(--tinta-fraca)]">Matiz {h}°</p>
+            <p className="font-mono text-[15px] tabular-nums text-[var(--tinta-fraca)]">Matiz {h}°</p>
             <button
               type="button"
-              className="border-0 py-1 bg-transparent cursor-pointer inline-flex items-center gap-[7px] text-[14px] font-medium text-[var(--tinta-media)] shadow-[inset_0_-1px_0_transparent] transition-[color,box-shadow] duration-[var(--t-curto)] ease-[var(--ease)] hover:text-[var(--tinta)] hover:shadow-[inset_0_-1px_0_rgba(var(--tinta-rgb),0.5)] active:scale-[0.96]"
+              className="border-0 py-1 bg-transparent cursor-pointer inline-flex items-center gap-[7px] text-[15px] font-medium text-[var(--tinta-media)] shadow-[inset_0_-1px_0_transparent] transition-[color,box-shadow] duration-[var(--t-curto)] ease-[var(--ease)] hover:text-[var(--tinta)] hover:shadow-[inset_0_-1px_0_rgba(var(--tinta-rgb),0.5)] active:scale-[0.96]"
               onClick={() => copiar(hex, 'Hex')}
             >
               {copiado === 'Hex' ? <IconeCheck /> : <IconeCopiar />}

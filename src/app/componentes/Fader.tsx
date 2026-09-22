@@ -23,10 +23,10 @@ function Fader({ rotulo, valor, min = 0, max = 100, unidade = '%', trilho, onCha
   return (
     <div className="flex flex-col gap-1.5 min-w-0">
       <div className="flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-[12px] tracking-[0.14em] uppercase font-semibold text-[var(--tinta-fraca)]">
+        <label htmlFor={id} className="text-[13px] tracking-[0.14em] uppercase font-semibold text-[var(--tinta-fraca)]">
           {rotulo}
         </label>
-        <output htmlFor={id} className="font-mono text-[14px] tabular-nums text-[var(--tinta-media)]">
+        <output htmlFor={id} className="font-mono text-[15px] tabular-nums text-[var(--tinta-media)]">
           {valor}
           {unidade}
         </output>

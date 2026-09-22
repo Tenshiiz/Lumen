@@ -59,10 +59,10 @@ function CampoDeValor({ formato, rotulo }: { formato: FormatoCampo; rotulo: stri
 
   // Contêiner em grid para alinhamento e acessibilidade sem aninhamento de botões no label
   return (
-    <div className="group relative min-w-0 py-[13px] pb-[15px] px-[clamp(10px,1.4vw,18px)] grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-1.5 [&:not(:first-child)]:before:content-[''] [&:not(:first-child)]:before:absolute [&:not(:first-child)]:before:left-0 [&:not(:first-child)]:before:top-[18%] [&:not(:first-child)]:before:bottom-[18%] [&:not(:first-child)]:before:w-px [&:not(:first-child)]:before:bg-[rgba(var(--tinta-rgb),0.10)] max-[760px]:[&:nth-child(odd)]:before:hidden max-[760px]:[&:nth-child(n+3)]:border-t max-[760px]:[&:nth-child(n+3)]:border-[rgba(var(--tinta-rgb),0.08)]">
+    <div className="group relative min-w-0 py-[14px] pb-[16px] px-[clamp(10px,1.4vw,18px)] grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-1.5 [&:not(:first-child)]:before:content-[''] [&:not(:first-child)]:before:absolute [&:not(:first-child)]:before:left-0 [&:not(:first-child)]:before:top-[18%] [&:not(:first-child)]:before:bottom-[18%] [&:not(:first-child)]:before:w-px [&:not(:first-child)]:before:bg-[rgba(var(--tinta-rgb),0.10)] max-[760px]:[&:nth-child(odd)]:before:hidden max-[760px]:[&:nth-child(n+3)]:border-t max-[760px]:[&:nth-child(n+3)]:border-[rgba(var(--tinta-rgb),0.08)]">
       <label
         htmlFor={idInput}
-        className={`col-span-full text-[12px] tracking-[0.14em] uppercase font-semibold transition-colors duration-[var(--t-curto)] ease-[var(--ease)] ${
+        className={`col-span-full text-[13px] tracking-[0.14em] uppercase font-semibold transition-colors duration-[var(--t-curto)] ease-[var(--ease)] ${
           invalido ? 'text-[var(--sinal-erro)]' : 'text-[var(--tinta-fraca)]'
         }`}
       >
@@ -76,7 +76,7 @@ function CampoDeValor({ formato, rotulo }: { formato: FormatoCampo; rotulo: stri
         autoComplete="off"
         aria-invalid={invalido}
         aria-describedby={invalido ? idAviso : undefined}
-        className="w-full min-w-0 mt-[3px] border-0 py-[2px] px-0 bg-transparent text-[var(--tinta)] font-mono text-[15px] tabular-nums shadow-[inset_0_-1px_0_transparent] transition-[box-shadow] duration-[var(--t-curto)] ease-[var(--ease)] hover:shadow-[inset_0_-1px_0_rgba(var(--tinta-rgb),0.22)] focus:outline-none focus:shadow-[inset_0_-1.5px_0_var(--luz-quente)] aria-[invalid=true]:shadow-[inset_0_-1.5px_0_var(--sinal-erro)]"
+        className="w-full min-w-0 mt-[3px] border-0 py-[3px] px-0 bg-transparent text-[var(--tinta)] font-mono text-[16px] tabular-nums shadow-[inset_0_-1px_0_transparent] transition-[box-shadow] duration-[var(--t-curto)] ease-[var(--ease)] hover:shadow-[inset_0_-1px_0_rgba(var(--tinta-rgb),0.22)] focus:outline-none focus:shadow-[inset_0_-1.5px_0_var(--luz-quente)] aria-[invalid=true]:shadow-[inset_0_-1.5px_0_var(--sinal-erro)]"
         onChange={(ev) => {
           setRascunho({ texto: ev.target.value, base: hex })
           setInvalido(false)
