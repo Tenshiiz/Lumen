@@ -134,7 +134,7 @@ O Lumen adota uma arquitetura de visualização em duas colunas no desktop para 
 
 **Testes End-to-End (E2E):** Playwright (7 perfis de dispositivos: Desktop, Notebook, Tablets e Smartphones)&nbsp; <img src="https://img.shields.io/badge/-Playwright-2EAD33?logo=playwright&logoColor=white&style=flat-square" alt="Playwright" height="20">
 
-**Testes Unitários:** tsx Runner com 38 testes matemáticos de conversão e gamut&nbsp; <img src="https://img.shields.io/badge/-tsx-3178C6?logo=typescript&logoColor=white&style=flat-square" alt="tsx" height="20">
+**Testes Unitários:** Vitest com 38 testes matemáticos de conversão e gamut&nbsp; <img src="https://img.shields.io/badge/-Vitest-6E9F18?logo=vitest&logoColor=white&style=flat-square" alt="Vitest" height="20">
 
 **Análise Estática:** ESLint (v9)&nbsp; <img src="https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white&style=flat-square" alt="ESLint" height="20">
 
