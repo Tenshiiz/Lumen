@@ -20,7 +20,7 @@
 <img src="https://img.shields.io/badge/Tailwind-v4-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">&nbsp;
 <img src="https://img.shields.io/badge/Zustand-v5-443E38?style=flat-square" alt="Zustand">&nbsp;
 <img src="https://img.shields.io/badge/Testes%20E2E-Playwright%207%2F7-4ADE80?style=flat-square" alt="E2E Tests">&nbsp;
-<img src="https://img.shields.io/badge/Testes%20Unit%C3%A1rios-38%20passing-4ADE80?style=flat-square" alt="Unit Tests">&nbsp;
+<img src="https://github.com/Tenshiiz/Lumen/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI">&nbsp;
 <img src="https://img.shields.io/badge/License-MIT-A78BFA?style=flat-square" alt="License">
 
 <br><br>
@@ -134,9 +134,11 @@ O Lumen adota uma arquitetura de visualização em duas colunas no desktop para 
 
 **Testes End-to-End (E2E):** Playwright (7 perfis de dispositivos: Desktop, Notebook, Tablets e Smartphones)&nbsp; <img src="https://img.shields.io/badge/-Playwright-2EAD33?logo=playwright&logoColor=white&style=flat-square" alt="Playwright" height="20">
 
-**Testes Unitários:** Vitest com 38 testes matemáticos de conversão e gamut&nbsp; <img src="https://img.shields.io/badge/-Vitest-6E9F18?logo=vitest&logoColor=white&style=flat-square" alt="Vitest" height="20">
+**Testes Unitários:** Vitest, cobrindo a matemática de conversão e gamut&nbsp; <img src="https://img.shields.io/badge/-Vitest-6E9F18?logo=vitest&logoColor=white&style=flat-square" alt="Vitest" height="20">
 
 **Análise Estática:** ESLint (v9)&nbsp; <img src="https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white&style=flat-square" alt="ESLint" height="20">
+
+**Integração Contínua:** GitHub Actions, que roda lint, checagem de tipos, testes unitários e build a cada push na `master` e em todo PR&nbsp; <img src="https://img.shields.io/badge/-GitHub_Actions-2088FF?logo=githubactions&logoColor=white&style=flat-square" alt="GitHub Actions" height="20">
 
 **Deploy:** Vercel&nbsp; <img src="https://img.shields.io/badge/-Vercel-000000?logo=vercel&logoColor=white&style=flat-square" alt="Vercel" height="20">
 
