@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import type { MouseEvent } from 'react'
-import { useHex } from '@/stores/useColorStore'
-import { useCopiar } from '@/hooks/useCopiar'
-import { useSaiuDeVista, useSecaoAtiva } from '@/hooks/useObservar'
-import { IDS_SECOES, SECOES } from '../secoes'
-import { IconeCheck, IconeCopiar, IconeSeta } from './Icones'
+import type { MouseEvent } from "react";
+import { useHex } from "@/stores/useColorStore";
+import { useCopiar } from "@/hooks/useCopiar";
+import { useSaiuDeVista, useSecaoAtiva } from "@/hooks/useObservar";
+import { IDS_SECOES, SECOES } from "../secoes";
+import { IconeCheck, IconeCopiar, IconeSeta } from "./Icones";
 
 /**
  * Barra de navegação e atalho da cor ativa, exibida quando a seção inicial sai da viewport.
  */
 function BarraAtiva() {
-  const hex = useHex()
-  const { copiar, copiado } = useCopiar()
-  const visivel = useSaiuDeVista('inicio')
-  const ativa = useSecaoAtiva(IDS_SECOES)
+  const hex = useHex();
+  const { copiar, copiado } = useCopiar();
+  const visivel = useSaiuDeVista("inicio");
+  const ativa = useSecaoAtiva(IDS_SECOES);
 
   // Fecha o menu mobile após a seleção de uma seção
   const fecharMenu = (ev: MouseEvent<HTMLAnchorElement>) =>
-    ev.currentTarget.closest('details')?.removeAttribute('open')
+    ev.currentTarget.closest("details")?.removeAttribute("open");
 
   return (
     <div
@@ -29,28 +29,33 @@ function BarraAtiva() {
       <div className="flex items-center gap-2.5 min-w-0">
         <span
           className="w-7 h-7 shrink-0 rounded-[9px] shadow-[inset_0_1px_0_rgba(var(--tinta-rgb),0.4),inset_0_-2px_3px_rgba(var(--escuro-rgb),0.45),0_0_0_1px_rgba(var(--escuro-rgb),0.5)]"
-          style={{ backgroundColor: 'var(--cor-atual)' }}
+          style={{ backgroundColor: "var(--cor-atual)" }}
           aria-hidden="true"
         />
-        <span className="font-mono text-[15px] tabular-nums text-[var(--tinta)]">{hex}</span>
+        <span className="font-mono text-[15px] tabular-nums text-[var(--tinta)]">
+          {hex}
+        </span>
         <button
           type="button"
           className="grid place-items-center w-8 h-8 border-0 rounded-full cursor-pointer text-[var(--tinta-media)] bg-transparent transition-[color,background-color,transform] duration-[var(--t-curto)] ease-[var(--ease)] hover:text-[var(--tinta)] hover:bg-[rgba(var(--tinta-rgb),0.08)] active:scale-[0.94]"
           aria-label="Copiar cor ativa"
           title="Copiar cor ativa"
-          onClick={() => copiar(hex, 'Hex')}
+          onClick={() => copiar(hex, "Hex")}
         >
-          {copiado === 'Hex' ? <IconeCheck /> : <IconeCopiar />}
+          {copiado === "Hex" ? <IconeCheck /> : <IconeCopiar />}
         </button>
       </div>
 
-      <nav className="max-[760px]:hidden flex items-center gap-1" aria-label="Seções">
+      <nav
+        className="max-[760px]:hidden flex items-center gap-1"
+        aria-label="Seções"
+      >
         {SECOES.map((secao) => (
           <a
             key={secao.id}
             href={`#${secao.id}`}
             className="text-[14px] font-medium no-underline text-[var(--tinta-media)] py-2 px-3.5 rounded-[var(--raio-pilula)] transition-[color,background-color] duration-[var(--t-curto)] ease-[var(--ease)] hover:text-[var(--tinta)] hover:bg-[rgba(var(--tinta-rgb),0.08)] aria-[current=location]:text-[var(--tinta)] aria-[current=location]:bg-[rgba(var(--luz-rgb),0.14)] aria-[current=location]:shadow-[inset_0_0_0_1px_rgba(var(--luz-rgb),0.38)]"
-            aria-current={ativa === secao.id ? 'location' : undefined}
+            aria-current={ativa === secao.id ? "location" : undefined}
           >
             {secao.rotulo}
           </a>
@@ -68,7 +73,7 @@ function BarraAtiva() {
               key={secao.id}
               href={`#${secao.id}`}
               className="text-[14px] font-medium no-underline text-[var(--tinta-media)] py-2 px-3.5 rounded-[var(--raio-pilula)] transition-[color,background-color] duration-[var(--t-curto)] ease-[var(--ease)] hover:text-[var(--tinta)] hover:bg-[rgba(var(--tinta-rgb),0.08)] aria-[current=location]:text-[var(--tinta)] aria-[current=location]:bg-[rgba(var(--luz-rgb),0.14)] aria-[current=location]:shadow-[inset_0_0_0_1px_rgba(var(--luz-rgb),0.38)]"
-              aria-current={ativa === secao.id ? 'location' : undefined}
+              aria-current={ativa === secao.id ? "location" : undefined}
               onClick={fecharMenu}
             >
               {secao.rotulo}
@@ -77,7 +82,7 @@ function BarraAtiva() {
         </div>
       </details>
     </div>
-  )
+  );
 }
 
-export default BarraAtiva
+export default BarraAtiva;
